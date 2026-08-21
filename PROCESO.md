@@ -529,3 +529,62 @@ rompería iOS y web. Se conservaron.
 _(pendiente)_
 
 ---
+
+## T003 — Definir los tipos del dominio
+
+**Fecha:** 2026-08-21
+**Tarea:** T003 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+prosigamos con el T003, recuerda, siempre que avancemos a una siguiente tarea
+primero especificame que harás
+```
+
+Se revisó el plan antes de escribir código, y se aprobó con "avanza".
+
+### Qué se generó
+
+`types/gasto.ts`, un único archivo nuevo. No se tocó nada existente.
+
+- **`CATEGORIAS`** — arreglo `as const` con las seis categorías en el orden de la
+  spec, no alfabético. Es la única fuente para poblar el selector (T014) y para
+  recorrer el resumen (T019).
+- **`Categoria`** — se deriva del arreglo con `(typeof CATEGORIAS)[number]`, en
+  lugar de escribirse como una unión aparte. Así el tipo y la lista no pueden
+  divergir: agregar una categoría en un solo lugar alcanza.
+- **`Gasto`** — `id`, `monto`, `categoria`, `fecha` (ISO `AAAA-MM-DD`),
+  `descripcion` y `creadoEn`. Sin campo de moneda: FR-021 fija pesos, y
+  modelarlo sería agregar algo que la spec deja fuera de alcance.
+- **`ResumenCategoria`** — `categoria` y `total`, con un comentario que aclara
+  que es un valor derivado, no almacenado.
+
+**Decisión de modelado señalada antes de implementar**: `descripcion` quedó como
+`string` requerido con cadena vacía cuando no hay, en vez de `descripcion?:
+string`. Así ninguna pantalla necesita chequear `undefined` antes de renderizar.
+La alternativa era legítima y se marcó para poder cambiarla ahora y no después.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Prueba de tipos con archivo temporal**: se escribió un archivo que asigna
+  una categoría válida, construye un `Gasto` y un `ResumenCategoria` completos, e
+  intenta asignar `'Viajes'` a `Categoria` bajo `@ts-expect-error`. Compiló en
+  cero, lo que prueba dos cosas: que las formas de los tipos son usables, y que
+  la categoría inventada es efectivamente rechazada (si no lo fuera, `tsc`
+  habría fallado por una directiva `@ts-expect-error` sin uso). El archivo se
+  borró después de la verificación.
+
+**No se probó en Expo Go, y en este caso no correspondía**: son solo tipos, se
+borran al compilar y ninguna pantalla los usa todavía. Abrir la app habría sido
+una comprobación vacía. El primer uso real llega en T005.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---

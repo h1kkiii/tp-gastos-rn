@@ -49,7 +49,7 @@ necesitan.
 
 **⚠️ CRÍTICO**: ninguna historia de usuario puede empezar hasta terminar esta fase.
 
-- [ ] T003 [P] Definir `Gasto`, `Categoria`, la constante `CATEGORIAS` y `ResumenCategoria` en `types/gasto.ts`, según [data-model.md](./data-model.md)
+- [x] T003 [P] Definir `Gasto`, `Categoria`, la constante `CATEGORIAS` y `ResumenCategoria` en `types/gasto.ts`, según [data-model.md](./data-model.md)
 - [ ] T004 [P] Escribir las funciones de conversión y formato de fecha (ISO `AAAA-MM-DD` ↔ `dd/mm/aaaa`, y validación de fecha existente) en `utils/fecha.ts`
 - [ ] T005 Crear la semilla de 5 a 8 gastos de ejemplo en `services/mocks-gastos.ts`, cubriendo al menos cuatro categorías y con al menos dos gastos compartiendo fecha
 - [ ] T006 Implementar la lectura y escritura en AsyncStorage sobre la clave `gastos-app:gastos` en `services/almacenamiento.ts`, incluyendo la siembra en el primer arranque y el tratamiento del JSON corrupto como error de lectura
