@@ -447,3 +447,80 @@ una tarea que lo cubra.
 _(pendiente)_
 
 ---
+
+## T002 — Quitar rutas y componentes del starter
+
+**Fecha:** 2026-08-21
+**Tarea:** T002 de `specs/001-gestion-gastos/tasks.md` (Fase 1, Setup)
+
+### Prompt usado
+
+```
+Quiero implementar la tarea T002 de tasks.md.
+Antes de tocar nada, mostrame un plan breve de qué vas a hacer.
+```
+
+Y tras revisar el plan:
+
+```
+haz lo que debas hacer en T002, mejor si no dejas archivos rotos,
+cuando esté, lo pruebo con expo go
+```
+
+### Qué se generó
+
+**Cuatro archivos borrados**, los que nombra la tarea:
+
+- `app/(tabs)/explore.tsx`
+- `app/modal.tsx`
+- `components/hello-wave.tsx`
+- `components/parallax-scroll-view.tsx`
+
+**Tres archivos modificados**:
+
+- `app/(tabs)/_layout.tsx` — se quitó el `Tabs.Screen` de "explore" y se
+  renombró la pestaña restante de "Home" a "Gastos".
+- `app/_layout.tsx` — se quitó el `Stack.Screen` del modal.
+- `app/(tabs)/index.tsx` — reducido a una pantalla provisoria con el título
+  "Gastos", con un comentario que señala que T012 la reemplaza por el listado
+  real.
+
+**El texto de la tarea estaba incompleto.** T002 nombraba solo los dos layouts
+como archivos con referencias a limpiar, pero `app/(tabs)/index.tsx` también
+importaba `HelloWave` y `ParallaxScrollView` y linkeaba a `/modal`. Sin tocarlo,
+borrar los componentes dejaba tres imports rotos y la app no bundleaba. Se
+detectó al revisar el plan, antes de escribir código, y se resolvió dentro de la
+misma tarea para no dejar el repositorio en un estado roto entre commits.
+
+### Cómo se verificó
+
+Antes de pasar a prueba manual:
+
+- `npm run lint` — sin hallazgos.
+- `npx tsc --noEmit` — sin errores. Es el chequeo que de verdad atrapa imports
+  rotos, más que el linter.
+- `grep` de referencias a lo borrado (`hello-wave`, `parallax-scroll-view`,
+  `name="explore"`, `name="modal"`, `href="/modal"`) — ninguna.
+
+**Probado en Expo Go: funciona.** La app arranca con una sola pestaña "Gastos" y
+sin rastros del starter.
+
+En el primer intento seguían apareciendo las dos pestañas viejas. Se verificó
+que el código en disco fuera el correcto, se descartó un problema real y se
+confirmó que era un bundle cacheado; tras reiniciar Expo Go, la app mostró el
+estado esperado.
+
+### Pendientes que dejó esta tarea
+
+`components/ui/collapsible.tsx` y `components/external-link.tsx` quedaron sin
+ningún consumidor: su único uso era `explore.tsx`. **No se borraron**, porque la
+tarea no los nombra y hacerlo habría ampliado su alcance por cuenta propia.
+Quedan como código muerto que compila, a la espera de una decisión.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---

@@ -36,7 +36,7 @@ estructura fijada en la constitución: `app/`, `components/`, `services/`,
 restos del starter de Expo.
 
 - [x] T001 Instalar `@react-native-async-storage/async-storage` con `npx expo install` y verificar que quede registrada en `package.json`
-- [ ] T002 Quitar las rutas y componentes de demostración del starter: borrar `app/(tabs)/explore.tsx`, `app/modal.tsx`, `components/hello-wave.tsx` y `components/parallax-scroll-view.tsx`, y limpiar sus referencias en `app/(tabs)/_layout.tsx` y `app/_layout.tsx`
+- [x] T002 Quitar las rutas y componentes de demostración del starter: borrar `app/(tabs)/explore.tsx`, `app/modal.tsx`, `components/hello-wave.tsx` y `components/parallax-scroll-view.tsx`, y limpiar sus referencias en `app/(tabs)/_layout.tsx` y `app/_layout.tsx`
 
 **Checkpoint**: la app sigue levantando en Expo Go, con una sola pestaña vacía.
 
