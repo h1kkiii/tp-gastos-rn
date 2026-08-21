@@ -419,11 +419,17 @@ adelantado otra tarea.
   `package.json` reporta la versión 2.2.0.
 - `package-lock.json` quedó actualizado.
 
-**No se probó en Expo Go.** El plan original lo incluía, porque agregar un
-módulo nativo es un momento típico de rotura del bundle, pero se decidió
-saltear esa verificación por tratarse de una instalación sin cambios de
-código. Queda anotado: si el bundle falla al arrancar, el primer sospechoso es
-esta tarea.
+**Probado en Expo Go: funciona.** La verificación se hizo después del commit,
+no antes. En un primer momento se decidió saltearla por tratarse de una
+instalación sin cambios de código, y así quedó registrado; enseguida se
+reconsideró, con el criterio de que es más barato descubrir una rotura de
+bundle con un solo commit encima que diez tareas más adelante.
+
+Se levantó el servidor con `npm start` y se cargó `exp://192.168.1.174:8081`
+en Expo Go. La app bundleó y arrancó sin error, mostrando todavía el starter
+de Expo (las pestañas "Home" y "Explore"), que es lo esperado porque T002
+—la limpieza del starter— aún no se hizo. Confirmado: instalar AsyncStorage no
+rompió el bundle.
 
 Efecto colateral menor: npm reordenó `react-native-worklets` alfabéticamente
 dentro de `dependencies` al reescribir el archivo. Es ruido de formato, sin
