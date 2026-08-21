@@ -513,9 +513,14 @@ estado esperado.
 ### Pendientes que dejó esta tarea
 
 `components/ui/collapsible.tsx` y `components/external-link.tsx` quedaron sin
-ningún consumidor: su único uso era `explore.tsx`. **No se borraron**, porque la
-tarea no los nombra y hacerlo habría ampliado su alcance por cuenta propia.
-Quedan como código muerto que compila, a la espera de una decisión.
+ningún consumidor: su único uso era `explore.tsx`. No se borraron dentro de T002,
+porque la tarea no los nombra. **Se eliminaron enseguida después**, por decisión
+explícita de la autora, en un commit `chore:` aparte.
+
+Al buscar huérfanos apareció una trampa: `components/ui/icon-symbol.ios.tsx` y
+`hooks/use-color-scheme.web.ts` también dan cero usos en un grep, pero **sí se
+usan**. React Native los resuelve por extensión de plataforma, así que borrarlos
+rompería iOS y web. Se conservaron.
 
 ### Qué corregí a mano
 
