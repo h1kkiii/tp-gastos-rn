@@ -374,3 +374,70 @@ archivo que crea T017.
 _(pendiente)_
 
 ---
+
+## T001 — Instalar AsyncStorage
+
+**Fecha:** 2026-08-21
+**Tarea:** T001 de `specs/001-gestion-gastos/tasks.md` (Fase 1, Setup)
+
+### Prompt usado
+
+```
+Quiero implementar la tarea T001 de tasks.md: instalar
+@react-native-async-storage/async-storage con npx expo install y verificar
+que quede registrada en package.json.
+
+Antes de tocar nada, mostrame un plan breve de qué vas a hacer.
+```
+
+Se revisó el plan antes de ejecutar, según el flujo de trabajo del proyecto.
+
+### Qué se generó
+
+No se escribió código. La tarea es solo la instalación de la dependencia:
+
+```bash
+npx expo install @react-native-async-storage/async-storage
+```
+
+Se usó `expo install` y no `npm install` a propósito: elige la versión
+compatible con el SDK instalado en lugar de la última publicada. Resultado:
+**`@react-native-async-storage/async-storage` 2.2.0**, compatible con Expo
+SDK 54.
+
+Archivos modificados: `package.json` y `package-lock.json`.
+
+El primer `import` de AsyncStorage no ocurre en esta tarea: llega en T006,
+cuando se escriba `services/almacenamiento.ts`. Importarlo ahora habría
+adelantado otra tarea.
+
+### Cómo se verificó
+
+- `@react-native-async-storage/async-storage: "2.2.0"` figura en `dependencies`
+  de `package.json`, con versión fijada.
+- Existe `node_modules/@react-native-async-storage/async-storage`, y su
+  `package.json` reporta la versión 2.2.0.
+- `package-lock.json` quedó actualizado.
+
+**No se probó en Expo Go.** El plan original lo incluía, porque agregar un
+módulo nativo es un momento típico de rotura del bundle, pero se decidió
+saltear esa verificación por tratarse de una instalación sin cambios de
+código. Queda anotado: si el bundle falla al arrancar, el primer sospechoso es
+esta tarea.
+
+Efecto colateral menor: npm reordenó `react-native-worklets` alfabéticamente
+dentro de `dependencies` al reescribir el archivo. Es ruido de formato, sin
+cambio de versión.
+
+Aviso pendiente de la instalación: npm reporta 19 vulnerabilidades (10
+moderadas, 9 altas) en el árbol de dependencias, heredadas del template de
+Expo. No se tocaron, para no alterar el stack fijado por la constitución sin
+una tarea que lo cubra.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
