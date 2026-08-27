@@ -668,3 +668,94 @@ se ve la fecha en pantalla.
 _(pendiente)_
 
 ---
+
+## T005 — Semilla de gastos de ejemplo
+
+**Fecha:** 2026-08-27
+**Tarea:** T005 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+haz el commit y pasemos a la siguiente tarea, recuerda siempre primero decirme
+que vas a hacer y esperar mi confirmacion para avanzar con nuevas tareas
+```
+
+Y tras revisar el plan de la tarea:
+
+```
+avanza
+```
+
+### Qué se generó
+
+`services/mocks-gastos.ts`, un único archivo nuevo. Es la primera vez que aparece
+la carpeta `services/`. No se tocó nada existente.
+
+Exporta una sola constante, `GASTOS_SEMILLA: Gasto[]`, con **seis gastos**
+fechados entre el 17 y el 22 de agosto de 2026. Los datos no son al azar: cada
+elección habilita una verificación posterior.
+
+| Elección | Para qué |
+|---|---|
+| 6 gastos | la tarea pide entre 5 y 8 |
+| 5 categorías, dejando **Otros vacía** | comprobar en T019 que el resumen no lista categorías sin gastos |
+| 2 gastos el **20/08**, con `creadoEn` distinto | probar el orden estable que exige FR-002 |
+| `g5` con `descripcion: ''` | el caso de descripción vacía que resuelve el detalle (T017) |
+| montos mezclados: redondos y con centavos | que el formato de monto se vea trabajado en el listado |
+
+Cuatro decisiones de implementación:
+
+- **Fechas fijas, escritas a mano, no calculadas desde hoy.** Una semilla que se
+  mueve con el reloj haría que el guion de `quickstart.md` diera un resultado
+  distinto cada día. La contra es que dentro de unos meses los datos se van a ver
+  viejos; se aceptó a cambio de que la verificación sea reproducible.
+- **`id` fijo** (`'g1'`…`'g6'`), no generado. Es semilla: tiene que ser el mismo
+  en cada instalación para poder navegar al detalle con un id conocido.
+- **Import de tipo** (`import type { Gasto }`), con el alias `@/` que ya usa el
+  resto del proyecto. Al ser `import type` desaparece al compilar: el archivo no
+  arrastra ninguna dependencia en tiempo de ejecución.
+- **Sin `async` ni `setTimeout`, y sin tocar AsyncStorage.** Acá es solo el
+  arreglo de datos. La persistencia es T006 y la latencia simulada es T007;
+  adelantarlas habría metido dos tareas dentro de una.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores. Es lo que garantiza que las seis categorías
+  escritas a mano sean valores válidos de `Categoria`: un typo como `'Comidas'`
+  no compila.
+- `npm run lint` — sin hallazgos.
+- **Prueba de datos con 13 chequeos**, compilando a JavaScript en un directorio
+  temporal y corriendo un script con Node. **13 de 13 pasan.** Cubren las tres
+  condiciones que pide la tarea (cantidad entre 5 y 8, al menos cuatro
+  categorías, al menos dos gastos con la misma fecha) más la integridad de los
+  datos: ids únicos, montos mayores a cero y con hasta dos decimales, `creadoEn`
+  únicos, descripción siempre `string`, al menos una vacía, y "Otros" sin usar.
+  Las seis fechas se validaron pasándolas por `esFechaValida` de T004, así la
+  semilla queda contrastada contra las utilidades reales y no contra una regex
+  escrita para la ocasión.
+- El script además imprime el **orden esperado del listado** y los **totales por
+  categoría**, que quedan como valores de referencia para contrastar a ojo
+  cuando se implementen T012 y T019:
+  Servicios 12500 · Ocio 8900.75 · Salud 6300 · Comida 5630.75 · Transporte 1200.
+
+**Un error detectado y corregido durante la verificación**: los `creadoEn` del
+primer borrador eran marcas de tiempo de **2025**, un año antes que la `fecha`
+del propio gasto. No rompía nada —`creadoEn` no se muestra y solo desempata el
+orden— pero eran datos incoherentes. Se recalcularon los seis contra su fecha
+real, con una hora del día plausible, y se agregó esa hora como comentario al
+lado de cada valor. Se verificó con un chequeo aparte que el día de `creadoEn`
+coincide con el campo `fecha` en los seis casos.
+
+**No se probó en Expo Go, y en este caso no correspondía**: ningún `import`
+alcanza el archivo todavía, así que el bundle es idéntico al de la tarea
+anterior. La semilla se ve por primera vez en pantalla en T012, y recién va a
+escribirse en el dispositivo cuando exista T006.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
