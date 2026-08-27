@@ -867,3 +867,119 @@ verdad antes de correr las herramientas.
 _(pendiente)_
 
 ---
+
+## T007 — Las cinco funciones del servicio
+
+**Fecha:** 2026-08-27
+**Tarea:** T007 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+si, commitea la tarea realizada y dime lo que quieres decidir en la tarea actual
+```
+
+Y, sobre las dos decisiones que se plantearon antes de escribir código:
+
+```
+con respecto al id, sigamos con el date.now() + sufijo aleatorio corto.
+Con respecto a lo segundo, si, redondelo a dos decimales y que no valide nada mas
+```
+
+### Qué se generó
+
+`services/gastos-service.ts`, un único archivo nuevo. No se tocó nada existente.
+
+Es la tarea bisagra de la fase: la única superficie por la que las pantallas
+acceden a datos, y la costura que un backend real reemplazaría sin que ninguna
+pantalla cambie. Las cinco funciones del contrato, todas `async`, todas con
+latencia simulada, todas lanzando ante error en vez de devolverlo como valor:
+
+| Función | Qué hace |
+|---|---|
+| `obtenerGastos` | todos, **ya ordenados**; el vacío es resultado válido, no error |
+| `obtenerGastoPorId` | uno puntual; **lanza** si no existe |
+| `crearGasto` | asigna `id` y `creadoEn`, redondea el monto y guarda |
+| `borrarGasto` | elimina; **lanza** si no existe |
+| `obtenerResumenPorCategoria` | total por categoría, solo las que tienen gastos |
+
+Más cuatro auxiliares privadas: `demorar`, `ordenarPorFecha`, `generarId` y
+`redondearMonto`.
+
+**Dos decisiones que se consultaron antes de escribir código**, por no estar
+resueltas en los documentos de diseño:
+
+1. **Generación del `id`**: `Date.now()` más un sufijo aleatorio corto
+   (`1787874093314-gjyj`). Se descartó `crypto.randomUUID()` porque en React
+   Native exige el polyfill `react-native-get-random-values`, o sea una
+   dependencia nueva: el mismo motivo por el que el plan ya había descartado el
+   selector de fecha nativo. Se descartó `Date.now()` a secas porque dos gastos
+   creados en el mismo milisegundo colisionarían, y un `id` duplicado rompe el
+   detalle y el borrado en silencio. Y se descartó usar el índice del arreglo o
+   un contador, que se rompe apenas se borra un gasto del medio.
+2. **Redondeo del monto**: `crearGasto` redondea a dos decimales y **no valida
+   nada más**. Había una tensión aparente entre dos documentos: `research.md`
+   (decisión 4) pide redondear al guardar, y el contrato dice que las funciones
+   no validan la entrada. Conviven, porque **redondear no es validar**: validar
+   es rechazar y devolverle un mensaje a la persona, y eso vive en el formulario
+   (T015); redondear es normalizar un dato que ya se aceptó. Ubicarlo en el
+   servicio garantiza que nada mal formado entre al almacenamiento venga de donde
+   venga, que es lo que haría un backend. Se verificó que efectivamente no valida
+   nada más: un monto negativo se acepta sin chistar.
+
+**Una corrección durante la implementación**: el resumen filtraba las categorías
+por `total > 0`. Es sutilmente distinto de lo que pide FR-017, que habla de
+categorías **con al menos un gasto**. Con montos siempre mayores a cero las dos
+formas coinciden, pero un gasto de monto 0 habría hecho desaparecer su categoría
+entera del resumen. Se cambió a filtrar por cantidad de gastos, que es la regla
+tal como está escrita.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Banco de pruebas con 24 chequeos: 24 de 24 pasan.** Mismo método que en T006
+  —compilar a un directorio temporal y correr con Node contra un AsyncStorage
+  falso— pero ahora ejerciendo las cinco funciones reales del servicio sobre la
+  semilla. Cubre:
+  - **Latencia**: medida real de dos llamadas, ambas dentro de 500–1000 ms.
+  - **`obtenerGastos`**: devuelve las seis, en el orden correcto
+    (`g1 g2 g4 g3 g5 g6` — nótese que `g4` precede a `g3` porque comparten el
+    20/08 y desempata `creadoEn`); el vacío devuelve `[]` y no lanza; el
+    almacenamiento corrupto sí lanza.
+  - **`obtenerGastoPorId`**: trae el correcto y lanza con un `id` inexistente.
+  - **`crearGasto`**: redondea (999.999 → 1000; 2.345 → 2.35; 0.005 → 0.01),
+    asigna `id` y `creadoEn`, respeta el resto de los campos, deja el gasto
+    guardado, y **no valida** (acepta un monto negativo). Además, 150 creaciones
+    lanzadas a la vez produjeron 150 `id` distintos, y las 150 quedaron
+    guardadas.
+  - **`borrarGasto`**: elimina solo el pedido, lanza con un `id` inexistente, y
+    un borrado fallido deja lo guardado intacto.
+  - **`obtenerResumenPorCategoria`**: los cinco totales coinciden con la suma
+    manual calculada en T005; "Otros" no aparece por no tener gastos; el orden
+    es el de `CATEGORIAS` y no el del total; no hay fila de total general; sin
+    gastos devuelve vacío. Se agregó un caso de punto flotante: 0,10 + 0,20 da
+    exactamente 0,30 y no `0.30000000000000004`, gracias al redondeo del total.
+
+**Limitación conocida, no corregida**: `crearGasto` y `borrarGasto` hacen
+lectura-modificación-escritura sin serializar. Dos escrituras verdaderamente
+simultáneas podrían pisarse. En la prueba de 150 creaciones a la vez no se perdió
+ninguna, y la app no puede provocarlo: hay un solo formulario y un solo botón de
+guardar. Se deja anotado en vez de agregar un cerrojo que ninguna tarea pide.
+
+**No se probó en Expo Go, y en este caso no correspondía**: ninguna pantalla
+importa el servicio todavía —eso llega en T009 y T012—, así que el bundle es el
+mismo que el de la tarea anterior. A diferencia de T006, acá no hay ningún riesgo
+que solo el dispositivo pueda revelar: el módulo nativo de AsyncStorage ya quedó
+probado en el teléfono en la tarea anterior, y todo lo que agrega T007
+—`setTimeout`, `Math.random`, ordenamiento y sumas— es JavaScript común que el
+banco de pruebas ejerce igual que el teléfono. La latencia se va a ver por
+primera vez, como estado de carga real, en T012.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
