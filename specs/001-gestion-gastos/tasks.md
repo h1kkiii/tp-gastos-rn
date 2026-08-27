@@ -52,7 +52,7 @@ necesitan.
 - [x] T003 [P] Definir `Gasto`, `Categoria`, la constante `CATEGORIAS` y `ResumenCategoria` en `types/gasto.ts`, según [data-model.md](./data-model.md)
 - [x] T004 [P] Escribir las funciones de conversión y formato de fecha (ISO `AAAA-MM-DD` ↔ `dd/mm/aaaa`, y validación de fecha existente) en `utils/fecha.ts`
 - [x] T005 Crear la semilla de 5 a 8 gastos de ejemplo en `services/mocks-gastos.ts`, cubriendo al menos cuatro categorías y con al menos dos gastos compartiendo fecha
-- [ ] T006 Implementar la lectura y escritura en AsyncStorage sobre la clave `gastos-app:gastos` en `services/almacenamiento.ts`, incluyendo la siembra en el primer arranque y el tratamiento del JSON corrupto como error de lectura
+- [x] T006 Implementar la lectura y escritura en AsyncStorage sobre la clave `gastos-app:gastos` en `services/almacenamiento.ts`, incluyendo la siembra en el primer arranque y el tratamiento del JSON corrupto como error de lectura
 - [ ] T007 Implementar las cinco funciones de `services/gastos-service.ts` (`obtenerGastos`, `obtenerGastoPorId`, `crearGasto`, `borrarGasto`, `obtenerResumenPorCategoria`) con latencia simulada de 500–1000 ms, según [contracts/services.md](./contracts/services.md) (depende de T003, T005, T006)
 - [ ] T008 [P] Crear los tres componentes de estado reutilizables: `components/estado-carga.tsx`, `components/estado-vacio.tsx` y `components/estado-error.tsx` (este último con acción de reintentar)
 - [ ] T009 Crear el hook de carga con estados carga/vacío/error y refresco al ganar foco en `hooks/use-gastos.ts` (depende de T007)

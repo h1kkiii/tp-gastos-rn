@@ -759,3 +759,111 @@ escribirse en el dispositivo cuando exista T006.
 _(pendiente)_
 
 ---
+
+## T006 — Persistencia en AsyncStorage
+
+**Fecha:** 2026-08-27
+**Tarea:** T006 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+haz el commit y pasemos a la siguiente tarea entonces
+```
+
+Y, tras plantear la duda de cómo verificar una capa que ninguna pantalla importa
+todavía, la decisión sobre la sonda descartable:
+
+```
+hagamos lo primero, asi seguimos el criterio que aplicamos con la primer tarea
+```
+
+### Qué se generó
+
+`services/almacenamiento.ts`, un único archivo nuevo. No se tocó nada existente.
+
+Expone tres cosas: la clave `CLAVE_GASTOS` (`'gastos-app:gastos'`, la única que
+usa la app), `leerGastos()` y `guardarGastos()`. Adentro queda `parsearGastos()`,
+que no se exporta porque es un detalle de cómo se decodifica lo guardado.
+
+Las decisiones que definen esta tarea son todas sobre **qué hacer cuando algo
+sale mal**:
+
+- **El JSON corrupto lanza; no se repara.** Fue la decisión más importante del
+  archivo. La tentación es capturar el fallo de parseo y "arreglarlo" escribiendo
+  la semilla encima, y eso destruiría en silencio los gastos reales de la persona
+  ante un parseo fallido. El `catch` lanza y deja lo guardado intacto, para que
+  la pantalla muestre su estado de error (FR-019) y el dato siga ahí por si se
+  puede recuperar.
+- **Un JSON válido que no sea un arreglo también se rechaza.** `{"gastos":[]}` y
+  `null` parsean sin error pero no son utilizables. Sin ese chequeo, un
+  `null` guardado se habría propagado como si fuera una lista y habría reventado
+  más arriba, lejos de la causa.
+- **La siembra se dispara solo si la clave no existe**, no si el arreglo está
+  vacío. Un arreglo vacío es un dato legítimo: si la persona borra todos sus
+  gastos, no tienen que volver los de ejemplo.
+- **Se devuelve una copia** (`[...GASTOS_SEMILLA]`), no la constante misma, para
+  que nadie pueda mutar la semilla del módulo sin querer.
+- **Se guarda el arreglo completo, pisando lo anterior.** A esta escala reescribir
+  todo es más simple que una escritura parcial y no se puede desincronizar.
+
+### Cómo se verificó
+
+Esta tarea se verificó en dos planos, porque ninguno de los dos alcanzaba solo.
+
+**1. Fuera del teléfono: 15 de 15 chequeos pasan.** Se compiló a JavaScript en un
+directorio temporal y se corrió con Node un banco de pruebas que reemplaza
+AsyncStorage por un doble en memoria —con contador de escrituras— y resuelve el
+alias `@/` con un hook de resolución de módulos. Se ejerce el código real, no una
+copia. Cubre: que la clave sea la que fija el data-model; siembra en el primer
+arranque **con exactamente una escritura**; que la segunda lectura **no** vuelva
+a escribir; que un gasto borrado no reaparezca; que el arreglo vacío se conserve
+sin resembrar; ida y vuelta sin pérdida; JSON corrupto (lanza, **no** pisa lo
+guardado, cero escrituras); objeto en vez de arreglo; `null` literal; y que un
+fallo del propio AsyncStorage se propague en lugar de tragarse.
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**2. En el teléfono, con una sonda descartable. Probado en Expo Go: funciona.**
+
+El doble en memoria no puede probar lo único que esta tarea realmente estrena:
+que el **módulo nativo** de AsyncStorage responda en el dispositivo. Ninguna
+pantalla importa `almacenamiento.ts` todavía —eso llega en T009 y T012—, así que
+abrir la app sin más habría mostrado exactamente lo mismo que en T005.
+
+Se aplicó el criterio que ya se había usado en T001: es más barato descubrir una
+rotura con un commit encima que con seis. Se agregó **temporalmente** a
+`app/(tabs)/index.tsx` una sonda que llama a `leerGastos()` y muestra en pantalla
+tres cosas distintas: si la clave tenía algo **antes** de leer, cuántos gastos
+devolvió la lectura, y si **después** quedó contenido escrito en la clave. Esa
+última línea es la que prueba que la escritura llegó al disco del teléfono.
+
+Resultado: correcto. La lectura devolvió los 6 gastos de la semilla y la clave
+quedó escrita; al cerrar la app por completo y volver a abrirla, los datos
+seguían ahí. Eso confirma la persistencia entre cierres que exige el principio IV
+de la constitución.
+
+La sonda **no se commitea**: importaba AsyncStorage directamente en una pantalla
+—cosa que el contrato de servicios prohíbe— justamente para poder espiar la clave
+cruda. Antes de commitear se restauró `app/(tabs)/index.tsx` desde una copia del
+original y se verificó con `git diff` que el archivo quedó idéntico al de la
+tarea anterior, sin una sola línea de diferencia. Es el mismo procedimiento que
+los archivos de prueba temporales de T003 a T005, solo que corriendo en el
+teléfono en vez de en Node.
+
+**Incidente de entorno, sin relación con el código**: al reverificar después de
+restaurar, `npm run lint` abortó dos veces con `JavaScript heap out of memory`.
+No era un problema del proyecto: el árbol de procesos de Metro había sobrevivido
+al cierre del servidor de desarrollo y dejaba la máquina con 732 MB libres de
+7,9 GB. Se cerraron los procesos huérfanos y el lint volvió a pasar limpio. Queda
+anotado porque puede repetirse: conviene verificar que Metro haya cerrado de
+verdad antes de correr las herramientas.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
