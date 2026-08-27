@@ -588,3 +588,83 @@ una comprobación vacía. El primer uso real llega en T005.
 _(pendiente)_
 
 ---
+
+## T004 — Conversión y validación de fechas
+
+**Fecha:** 2026-08-27
+**Tarea:** T004 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+lee el claude.md y proceso.md para ver en que parte del trabajo nos quedamos
+```
+
+Y tras revisar el plan de la tarea:
+
+```
+bien, procede
+```
+
+### Qué se generó
+
+`utils/fecha.ts`, un único archivo nuevo (73 líneas). No se tocó nada existente.
+Es la primera vez que aparece la carpeta `utils/`.
+
+Cuatro funciones exportadas, más dos auxiliares privadas:
+
+- **`aIsoDesdeDdMmAaaa(texto)`** — pasa `dd/mm/aaaa` a ISO `AAAA-MM-DD`.
+  Devuelve `null` si el formato no coincide o si el día no existe. Es lo que va
+  a usar la validación del formulario en T015.
+- **`aDdMmAaaaDesdeIso(iso)`** — la inversa, para mostrar en la tarjeta (T011),
+  el detalle (T017) y precargar el campo de alta (T016).
+- **`esFechaValida(texto)`** — se apoya en la primera: es válida si convierte.
+  Una sola definición de "fecha válida", no dos que puedan divergir.
+- **`hoyIso()`** — la fecha de hoy en ISO, para precargar el formulario (FR-012).
+
+Auxiliares: `existeEnCalendario(anio, mes, dia)` y `conDosDigitos(numero)`.
+
+Tres decisiones de implementación:
+
+- **La validación no se resuelve con regex sola.** Una regex acepta `31/02/2026`
+  sin quejarse. La función construye la fecha con `new Date(anio, mes - 1, dia)`
+  y compara las partes del resultado con las de entrada: si `Date` corrió el día
+  solo —31 de febrero se vuelve 3 de marzo— las partes no coinciden y se rechaza.
+- **Fechas construidas en horario local, nunca con `new Date("2026-08-27")`.**
+  Ese constructor parsea la cadena como UTC, así que en Argentina (UTC−3) puede
+  devolver el día anterior. Con el constructor de tres argumentos eso no pasa.
+- **Se permiten fechas futuras**, según `data-model.md` línea 31. No hay ningún
+  chequeo de tope superior.
+
+Se descartó una función de "formato lindo" tipo *27 de agosto de 2026*: ninguna
+tarea la pide y `dd/mm/aaaa` es lo que fija el data-model para pantalla.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Prueba de comportamiento con 22 casos.** Como son funciones puras, se
+  compiló el archivo a JavaScript en un directorio temporal
+  (`npx tsc utils/fecha.ts --outDir <tmp> --module commonjs --target es2020`) y
+  se corrió con Node un script que compara cada resultado contra el esperado.
+  **22 de 22 pasan.** Los casos cubren: conversión normal en ambos sentidos, año
+  bisiesto (`29/02/2024` válido) y no bisiesto (`29/02/2026` rechazado), día
+  inexistente (`31/02/2026`), día cero (`00/01/2026`), mes 13, año de dos
+  dígitos (`1/1/26`), separador equivocado (`27-08-2026`), texto libre
+  (`'ayer'`), cadena vacía, cada formato pasado a la función del otro, ida y
+  vuelta sin pérdida, y `hoyIso()` contra la fecha local del sistema. El
+  directorio temporal quedó fuera del repositorio.
+
+**No se probó en Expo Go, y en este caso no correspondía**: son funciones puras
+que ninguna pantalla importa todavía. Abrir la app habría sido una comprobación
+vacía —el bundle es idéntico al de T003, porque el módulo no lo alcanza ningún
+`import`—. El primer uso real llega en T011, con la tarjeta del listado, y ahí sí
+se ve la fecha en pantalla.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
