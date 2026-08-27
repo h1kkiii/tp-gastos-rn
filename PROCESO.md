@@ -983,3 +983,95 @@ primera vez, como estado de carga real, en T012.
 _(pendiente)_
 
 ---
+
+## T008 — Los tres componentes de estado
+
+**Fecha:** 2026-08-27
+**Tarea:** T008 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+si, haz el commit
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+si, hazlo asi
+```
+
+### Qué se generó
+
+Tres archivos nuevos, ninguno existente modificado:
+
+- `components/estado-carga.tsx` — `ActivityIndicator` más un texto. Prop
+  `mensaje` opcional, con "Cargando…" por defecto.
+- `components/estado-vacio.tsx` — texto centrado, sin acción. Props `mensaje`
+  (requerido) y `detalle` (opcional, para sugerir cómo salir del vacío).
+- `components/estado-error.tsx` — mensaje más un botón **Reintentar**. Props
+  `mensaje` y `onReintentar`, ambos requeridos.
+
+Son la pieza que hace **cumplible** el principio III de la constitución (tres
+estados en toda pantalla). Si cada pantalla los escribiera por su cuenta, los
+estados se verían distintos en cada una y la regla quedaría en el papel. Acá se
+escriben una vez y las cuatro pantallas los reusan.
+
+Decisiones de diseño:
+
+- **Se reusa lo que ya existe.** Los tres se arman con `ThemedText` y
+  `useThemeColor`, que ya resolvían modo claro/oscuro. No se escribió ni un color
+  fijo: un `color: '#000'` haría desaparecer el texto en modo oscuro. El spinner
+  recibe explícitamente el color `tint` del tema por el mismo motivo.
+- **`mensaje` requerido en vacío y error, opcional en carga.** "Cargando…" sirve
+  igual en las cuatro pantallas, pero el vacío del listado ("Todavía no cargaste
+  ningún gasto") no es el del resumen. Hacerlo obligatorio impide que quede un
+  texto genérico e inútil.
+- **`Pressable` y no `Button`.** El `Button` de React Native casi no se puede
+  estilar y se ve distinto en iOS y Android. `Pressable` es lo que ya usa el
+  proyecto en `haptic-tab.tsx`, y permite dar feedback al mantener apretado:
+  el botón invierte sus colores mientras está presionado.
+- **Los componentes no saben nada de gastos.** No importan servicios ni tipos del
+  dominio: reciben texto y una función. Por eso el de error sirve igual para el
+  listado, el detalle y el resumen.
+- **Sin `flex: 1` propio.** Se centran dentro del espacio que les dé la pantalla.
+  Si se lo pusieran ellos, romperían el layout al colocarlos dentro de una lista.
+- Se agregó `accessibilityRole="button"` al botón de reintentar.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Acá el banco de pruebas en Node no servía: el
+resultado de esta tarea es visual, y lo único que puede decir si el spinner se ve,
+si el texto contrasta y si el botón responde al toque es el dispositivo.
+
+Se usó otra vez el mecanismo de la **sonda descartable**, igual que en T006: una
+versión temporal de `app/(tabs)/index.tsx` que renderiza seis bloques numerados
+—las variantes que importan de cada componente— con el botón de reintentar
+conectado a un contador visible en pantalla. Se verificó:
+
+1. Carga con mensaje por defecto y con mensaje propio; el spinner se ve.
+2. Vacío con y sin detalle.
+3. Error: el contador sube al tocar **Reintentar**, o sea que `onReintentar`
+   llega de verdad, y el botón cambia de color mientras está apretado.
+4. Error con un mensaje largo, para confirmar que el texto no se corta ni se
+   desborda.
+5. Modo oscuro: ningún texto ni borde desaparece.
+
+Después de la prueba se restauró `app/(tabs)/index.tsx` desde la copia del
+original y se verificó con `git diff` que quedó idéntico, y con un `grep` que no
+quedaran referencias a los tres componentes en `app/`. El commit lleva solo los
+tres archivos de la tarea.
+
+**Nota de entorno**: se cerró el árbol de procesos de Metro antes de correr las
+herramientas, por el problema de memoria que quedó anotado en T006.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
