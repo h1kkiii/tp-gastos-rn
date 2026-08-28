@@ -66,9 +66,7 @@ AsyncStorage figura en la constitución pero todavía no es dependencia en
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -118,9 +116,7 @@ referencia nadie, quedó huérfano. Decidir si se borra o se vuelve a enlazar.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -176,9 +172,7 @@ Git avisó que convertirá LF→CRLF en todos estos archivos (Windows sin
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -243,9 +237,7 @@ total general.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -301,9 +293,7 @@ Se verificó además que no quedaran placeholders de plantilla ni marcadores
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -369,9 +359,7 @@ archivo que crea T017.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -442,9 +430,7 @@ una tarea que lo cubra.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -524,9 +510,7 @@ rompería iOS y web. Se conservaron.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -583,9 +567,7 @@ una comprobación vacía. El primer uso real llega en T005.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -663,9 +645,7 @@ se ve la fecha en pantalla.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -754,9 +734,7 @@ escribirse en el dispositivo cuando exista T006.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -862,9 +840,7 @@ verdad antes de correr las herramientas.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -978,9 +954,7 @@ primera vez, como estado de carga real, en T012.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1070,9 +1044,7 @@ herramientas, por el problema de memoria que quedó anotado en T006.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1176,9 +1148,7 @@ guardado es lo que va a mostrar la app en las próximas tareas.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1255,9 +1225,7 @@ entró por enlace directo: `exp://192.168.1.174:8081/--/gasto/g1`.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1347,9 +1315,7 @@ largo no la rompa.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1425,9 +1391,7 @@ recorrió el bloque 1 del guion de `quickstart.md` tal como está escrito:
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1507,9 +1471,7 @@ al componente. El commit lleva un solo archivo.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1602,9 +1564,7 @@ a la sonda. El commit lleva un solo archivo.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1696,9 +1656,7 @@ conecta con los componentes de T013 y T014.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1791,9 +1749,7 @@ gastos propios y verlos en el listado, sobreviviendo al cierre.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1871,9 +1827,7 @@ el bloque 8 del `quickstart.md` más dos casos extra:
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -1956,9 +1910,7 @@ porque el punto 4 pedía borrar todo. Es el punto de partida para probar T019.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -2046,9 +1998,7 @@ quieto unos segundos en cada una.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -2133,9 +2083,7 @@ archivo quedó mal formado.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
-
-_(pendiente)_
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
 
@@ -2215,8 +2163,72 @@ el código, y emparejar los dos comandos.
 
 ### Qué corregí a mano
 
-<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+Nada: no hizo falta corregir a mano lo generado.
 
-_(pendiente)_
+---
+
+## T022 — Recorrido completo del guion de verificación
+
+**Fecha:** 2026-08-27
+**Tarea:** T022 de `specs/001-gestion-gastos/tasks.md` (Fase 8, Pulido).
+**Última tarea del plan.**
+
+### Prompt usado
+
+```
+haz el commit y sigamos
+```
+
+La tarea la ejecutó la autora en el dispositivo. El asistente levantó el servidor
+y preparó el guion agrupado por el estado del teléfono que necesita cada bloque,
+para no tener que ir y volver entre pantallas.
+
+### Qué se verificó
+
+Los trece bloques de [quickstart.md](../specs/001-gestion-gastos/quickstart.md),
+en Expo Go. **Los trece pasan.**
+
+| # | Bloque | Cubre | Resultado |
+|---|---|---|---|
+| 1 | Listado y estados | SC-006 | pasa |
+| 2 | Orden estable | edge cases | pasa: el orden entre los gastos de igual fecha no cambió entre aperturas |
+| 3 | Alta válida | SC-001, SC-005 | pasa |
+| 4 | Validación del monto | SC-002 | pasa |
+| 5 | Validación de categoría | SC-003 | pasa |
+| 6 | Validación de fecha | — | pasa |
+| 7 | Descripción opcional | — | pasa |
+| 8 | Detalle | FR-005 | pasa |
+| 9 | Borrado con confirmación | SC-004 | pasa |
+| 10 | Resumen | SC-007 | pasa |
+| 11 | Estado vacío | SC-006 | pasa |
+| 12 | Persistencia | SC-008 | pasa |
+| 13 | Navegación | SC-009 | pasa |
+
+Con esto quedan cubiertos los nueve criterios de éxito de la spec.
+
+### Un obstáculo previo, que era el comportamiento correcto
+
+El bloque 1 pide "la app recién instalada", con los gastos de ejemplo. **El
+dispositivo no podía volver solo a ese estado**, y no por un error: la semilla se
+escribe únicamente cuando la clave de AsyncStorage no existe. Como la clave ya
+existía —con los gastos de prueba de T019—, la semilla no iba a volver por más
+que se borrara todo, porque borrar deja la clave en `[]`, que es un dato válido.
+
+Es exactamente la decisión tomada en T006 y verificada en T018: lo guardado manda
+sobre los mocks, y un gasto borrado no reaparece. La consecuencia incómoda para
+la prueba es la prueba de que la regla funciona. Se resolvió volviendo el
+almacenamiento a cero desde afuera de la app, sin tocar el código.
+
+### Sobre el registro de los resultados
+
+El guion se entregó pidiendo el detalle de cada caso. La autora respondió con
+"todo funcional" por bloque y observó que desglosarlo era innecesario cuando el
+resultado es que funciona. **La observación se aceptó y se registra acá**: el
+detalle caso por caso importa cuando algo falla, porque hace falta saber qué
+apareció en lugar de lo esperado; cuando pasa, el resultado es el resultado.
+
+### Qué corregí a mano
+
+Nada: no hizo falta corregir a mano lo generado.
 
 ---
