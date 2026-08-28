@@ -2138,3 +2138,85 @@ archivo quedó mal formado.
 _(pendiente)_
 
 ---
+
+## T021 — Ejecutar el lint y corregir lo que aparezca
+
+**Fecha:** 2026-08-27
+**Tarea:** T021 de `specs/001-gestion-gastos/tasks.md` (Fase 8, Pulido)
+
+### Prompt usado
+
+```
+si, haz el commit y sigamos
+```
+
+Y, sobre el único hallazgo y qué hacer con él:
+
+```
+hazlo
+```
+
+### Qué se encontró
+
+`npm run lint` devuelve **0 errores** y ninguna salida. Pero una salida vacía es
+exactamente lo que se vería si el lint no estuviera revisando nada, así que antes
+de darla por buena se verificó la cobertura: eslint analiza **los 34 archivos**
+del proyecto, incluidos los 19 escritos en estas tareas. El lint funciona y el
+código pasa.
+
+Al pedir la salida en formato JSON apareció **un aviso que `npm run lint` no
+muestra**:
+
+```
+.expo/types/router.d.ts:1  Unused eslint-disable directive (no problems were reported)
+```
+
+Tres cosas sobre ese aviso: no es código propio —`.expo/` lo genera Expo y está
+en `.gitignore`—; el archivo trae un `/* eslint-disable */` que ya no hace falta
+y se regenera solo en cada corrida; y **`expo lint` no lo reporta**, solo aparece
+corriendo `npx eslint .` directo. Por eso venía pasando desapercibido en todas
+las tareas anteriores, donde el lint siempre se corrió con `npm run lint`.
+
+### Qué se cambió
+
+Una línea en `eslint.config.js`: se sumó `.expo/*` a la lista de ignorados, al
+lado del `dist/*` que ya estaba, con un comentario que explica el criterio.
+
+El motivo no fue tapar el aviso, sino que **el lint tiene que revisar el código
+que escribimos, no la salida que generan las herramientas**. Antes del cambio los
+dos comandos decían cosas distintas sobre el mismo proyecto, y eso es peor que
+cualquiera de los dos resultados por separado: quien mañana corriera `npx eslint`
+se preguntaría si tiene algo que arreglar.
+
+Se consultó antes de hacerlo, porque la alternativa —registrar que el lint pasa
+limpio y dejar el aviso anotado como ruido conocido— también era defendible:
+`npm run lint`, que es lo que la tarea pide correr, ya devolvía 0.
+
+### Cómo se verificó
+
+Después del cambio, los dos comandos coinciden:
+
+- `npm run lint` — salida 0, sin hallazgos.
+- `npx eslint .` — salida 0, sin hallazgos. Antes mostraba el aviso.
+- Conteo sobre la salida JSON: **33 archivos analizados, 0 errores, 0 avisos**,
+  de los cuales 29 son del código propio del proyecto. Cero archivos generados
+  bajo análisis.
+- `npx tsc --noEmit` — sin errores.
+
+**No se probó en Expo Go, y no correspondía**: el único cambio es la
+configuración del linter. No toca el código de la app ni el bundle.
+
+**Sobre el resultado general de la tarea**: el lint no encontró nada que corregir
+en el código propio, y eso es un resultado legítimo, no una tarea vacía. Se
+explica porque `npm run lint` se corrió en **todas** las tareas anteriores como
+parte de la verificación, así que nunca se llegó a esta instancia con deuda
+acumulada. El valor de T021 acá fue confirmar que el linter efectivamente cubría
+el código, y emparejar los dos comandos.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
