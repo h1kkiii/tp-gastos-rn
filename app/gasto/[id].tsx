@@ -1,15 +1,18 @@
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { EstadoCarga } from '@/components/estado-carga';
 import { EstadoError } from '@/components/estado-error';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { obtenerGastoPorId } from '@/services/gastos-service';
+import { borrarGasto, obtenerGastoPorId } from '@/services/gastos-service';
 import type { Gasto } from '@/types/gasto';
 import { aDdMmAaaaDesdeIso } from '@/utils/fecha';
 import { formatearMonto } from '@/utils/moneda';
+
+/** Mismo rojo que usan los mensajes de error del formulario. */
+const COLOR_BORRAR = '#d13438';
 
 export default function PantallaDetalleGasto() {
   // El id llega en la ruta: /gasto/g1
@@ -18,6 +21,8 @@ export default function PantallaDetalleGasto() {
   const [gasto, setGasto] = useState<Gasto | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [errorAlBorrar, setErrorAlBorrar] = useState<string | null>(null);
+  const [borrando, setBorrando] = useState(false);
 
   // Misma bandera que en use-gastos: con la latencia simulada hay tiempo de
   // salir de la pantalla antes de que llegue la respuesta.
@@ -49,6 +54,34 @@ export default function PantallaDetalleGasto() {
       };
     }, [cargar])
   );
+
+  /**
+   * Pide confirmación antes de tocar nada. FR-014 exige que ningún gasto
+   * desaparezca con una sola acción, así que el Alert va antes del servicio, no
+   * después con opción de deshacer.
+   */
+  function pedirConfirmacion() {
+    Alert.alert('Borrar gasto', '¿Seguro que querés borrar este gasto? No se puede deshacer.', [
+      // Cancelar no hace nada: ni una escritura, ni un cambio de pantalla.
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Borrar', style: 'destructive', onPress: borrar },
+    ]);
+  }
+
+  async function borrar() {
+    setBorrando(true);
+    setErrorAlBorrar(null);
+    try {
+      await borrarGasto(id);
+      // Se vuelve solo si la escritura salió bien: si falla, volver al listado
+      // haría creer que se borró algo que sigue estando.
+      router.back();
+    } catch (e) {
+      setErrorAlBorrar(e instanceof Error ? e.message : 'No se pudo borrar el gasto.');
+    } finally {
+      setBorrando(false);
+    }
+  }
 
   if (cargando) {
     return (
@@ -83,6 +116,23 @@ export default function PantallaDetalleGasto() {
             <ThemedText style={estilos.sinDato}>Sin descripción</ThemedText>
           )}
         </View>
+
+        {errorAlBorrar ? (
+          <ThemedText accessibilityRole="alert" style={estilos.errorBorrado}>
+            {errorAlBorrar}
+          </ThemedText>
+        ) : null}
+
+        <Pressable
+          onPress={pedirConfirmacion}
+          disabled={borrando}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: borrando }}
+          style={({ pressed }) => [estilos.botonBorrar, { opacity: borrando ? 0.5 : pressed ? 0.7 : 1 }]}>
+          <ThemedText type="defaultSemiBold" style={estilos.textoBorrar}>
+            {borrando ? 'Borrando…' : 'Borrar gasto'}
+          </ThemedText>
+        </Pressable>
       </ScrollView>
     </ThemedView>
   );
@@ -122,5 +172,19 @@ const estilos = StyleSheet.create({
   sinDato: {
     opacity: 0.5,
     fontStyle: 'italic',
+  },
+  errorBorrado: {
+    color: COLOR_BORRAR,
+  },
+  botonBorrar: {
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: COLOR_BORRAR,
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  textoBorrar: {
+    color: COLOR_BORRAR,
   },
 });

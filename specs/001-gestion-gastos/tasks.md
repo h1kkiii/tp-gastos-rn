@@ -118,7 +118,7 @@ categoría, fecha y descripción, y que se puede volver sin alterar nada.
 **Independent Test**: pedir borrar desde el detalle y probar los dos caminos:
 cancelar no borra nada, confirmar elimina el gasto del listado.
 
-- [ ] T018 [US4] Agregar la acción de borrado con confirmación mediante `Alert` nativo (cancelar y borrar destructivo) en `app/gasto/[id].tsx`, volviendo al listado tras confirmar (depende de T017)
+- [x] T018 [US4] Agregar la acción de borrado con confirmación mediante `Alert` nativo (cancelar y borrar destructivo) en `app/gasto/[id].tsx`, volviendo al listado tras confirmar (depende de T017)
 
 **Checkpoint**: el ciclo completo de un gasto —alta, consulta y borrado— está cerrado.
 

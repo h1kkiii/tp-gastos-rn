@@ -1876,3 +1876,88 @@ el bloque 8 del `quickstart.md` más dos casos extra:
 _(pendiente)_
 
 ---
+
+## T018 — El borrado con confirmación
+
+**Fecha:** 2026-08-27
+**Tarea:** T018 de `specs/001-gestion-gastos/tasks.md` (Fase 6, US4). **Cierra la US4.**
+
+### Prompt usado
+
+```
+haz el commit y sigamos
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+avanza
+```
+
+### Qué se generó
+
+Un único archivo modificado: `app/gasto/[id].tsx`, el detalle terminado en T017.
+Es **la única dependencia real entre historias de todo el plan**, y por eso el
+detalle tenía que existir antes.
+
+Se agregó un botón "Borrar gasto" al pie, con borde rojo, que abre un `Alert`
+nativo con dos botones: Cancelar (estilo por defecto) y Borrar (estilo
+`destructive`). Al confirmar, `borrarGasto(id)` y vuelta al listado, que se
+refresca solo al ganar foco.
+
+Se usó `Alert.alert` tal como fija la decisión 5 de `research.md`: es parte del
+núcleo de React Native, es modal de verdad —bloquea hasta que se elige— y usa el
+diálogo nativo de cada plataforma, así que la persona lo reconoce. Cero
+dependencias y cero estado propio que mantener.
+
+Las dos reglas duras que se respetaron:
+
+- **Nada se borra con una sola acción.** La spec lo dice con esas palabras
+  (FR-014). Por eso el `Alert` va **antes** de tocar el servicio, no después con
+  opción de deshacer: ese patrón, aunque es habitual, borra primero, y por eso
+  `research.md` ya lo había descartado.
+- **Cancelar no hace absolutamente nada**: ni una escritura, ni un cambio de
+  pantalla.
+
+**El detalle que se cuidó**: si el borrado falla, se **queda en el detalle** con
+el mensaje a la vista. Es fácil escribir `await borrarGasto(id); router.back();`
+y que un fallo devuelva igual al listado, dando a entender que se borró algo que
+sigue estando. El `router.back()` corre únicamente si la escritura salió bien.
+El botón además se deshabilita mientras borra, por el mismo motivo que en T016.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Se recorrió el bloque 9 del `quickstart.md`,
+que pide expresamente los dos caminos, más los dos escenarios extra de la spec:
+
+1. **Cancelar**: no se borra nada y se sigue en el detalle; el gasto sigue en el
+   listado.
+2. **Confirmar**: se vuelve al listado y el gasto ya no está.
+3. En ningún momento un gasto desaparece con una sola acción.
+4. **Borrando todos los gastos uno por uno**, el listado termina en su **estado
+   vacío**, no en una pantalla en blanco.
+5. **Cerrando la app por completo y volviendo a abrirla, los gastos borrados no
+   reaparecen.**
+
+El punto 5 es el más importante de toda la verificación hasta acá: comprueba de
+punta a punta la decisión tomada en T006 —la semilla se escribe una sola vez y
+desde ahí manda lo guardado— y con ella el principio IV de la constitución. Si la
+siembra se hubiera disparado por "lista vacía" en vez de por "clave inexistente",
+acá habrían reaparecido los seis gastos de ejemplo.
+
+**Con esto queda cerrado el ciclo completo de un gasto**: alta, consulta y
+borrado.
+
+**Estado del dispositivo**: la verificación terminó con el almacenamiento vacío,
+porque el punto 4 pedía borrar todo. Es el punto de partida para probar T019.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
