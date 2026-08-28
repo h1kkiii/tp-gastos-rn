@@ -1075,3 +1075,109 @@ herramientas, por el problema de memoria que quedó anotado en T006.
 _(pendiente)_
 
 ---
+
+## T009 — El hook de carga con refresco al ganar foco
+
+**Fecha:** 2026-08-27
+**Tarea:** T009 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+haz el commit y pasemos a la siguiente tarea
+```
+
+Y, sobre cómo verificar una tarea cuyo comportamiento central todavía no se
+puede demostrar:
+
+```
+hagamos la sonda con pestaña de prueba temporal, avanza con ello
+```
+
+### Qué se generó
+
+`hooks/use-gastos.ts`, un único archivo nuevo. No se tocó nada existente.
+
+Expone cuatro cosas: `gastos`, `cargando`, `error` y `recargar`. Es la pieza que
+une la capa de datos de T007 con los componentes de estado de T008: sin ella, las
+cuatro pantallas repetirían el mismo `useEffect` con `try/catch` y sus tres
+banderas. `error` ya viene con el mensaje listo para `EstadoError`, y `recargar`
+es exactamente lo que va en su acción de reintentar.
+
+Cuatro decisiones, todas sobre problemas que no se ven leyendo el código:
+
+- **Refresco al ganar foco, no al montar** (decisión 2 de `research.md`). Con
+  pestañas, la pantalla del listado **queda montada** al cambiar de tab. Si solo
+  recargara al montarse, cargar un gasto en "Nuevo" y volver a "Gastos" mostraría
+  datos viejos. Se resuelve con `useFocusEffect`, que ya viene con expo-router:
+  cero dependencias nuevas, y sin store global ni Context, para no tener dos
+  fuentes de verdad que puedan desincronizarse.
+- **Bandera de cancelación.** Con 500–1000 ms de latencia hay tiempo de sobra
+  para irse de la pantalla antes de que llegue la respuesta. Sin la bandera, un
+  `setState` tardío escribiría sobre un componente ya desmontado. Se marca en la
+  limpieza del efecto y se consulta antes de cada `setState`.
+- **`cargar` envuelto en `useCallback`.** `useFocusEffect` vuelve a correr su
+  efecto cuando cambia la función que recibe; una función nueva en cada render
+  provocaría **recargas infinitas**. Es el punto más frágil del archivo y quedó
+  comentado por eso.
+- **El vacío no es un error.** Si el servicio devuelve `[]`, el hook lo entrega
+  tal cual con `error: null`. Distinguir "no hay datos" de "falló la lectura" es
+  lo que le permite a la pantalla elegir entre `EstadoVacio` y `EstadoError`.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.**
+
+Antes de implementar se detectó un problema de verificación: **el refresco al
+ganar foco no se podía demostrar**, porque hasta acá había una sola pestaña y las
+otras dos llegan en T010. Sin un segundo tab al que ir y del que volver, no hay
+"ganar foco" que probar. Se decidió, en vez de dejar la deuda hasta T010, que la
+sonda incluyera **una pestaña de prueba descartable**.
+
+La sonda tuvo tres partes, todas fuera del commit: una versión temporal de
+`app/(tabs)/index.tsx` que consume el hook y muestra en pantalla `cargando`,
+`error`, la cantidad de gastos y dos contadores (cargas terminadas y renders); un
+archivo nuevo `app/(tabs)/prueba.tsx` con cinco acciones (crear gasto, borrar el
+más reciente, vaciar, romper el JSON, restaurar la semilla); y el alta de esa
+pestaña en `app/(tabs)/_layout.tsx`.
+
+Lo verificado:
+
+1. **Refresco al ganar foco**: crear un gasto desde la otra pestaña y volver
+   a "Gastos" hace subir el contador de cargas y aparece el gasto nuevo, sin
+   tocar nada.
+2. **Los tres estados contra datos reales**: vaciar el almacenamiento muestra el
+   estado vacío; romper el JSON muestra el de error; restaurar la semilla vuelve
+   a los seis gastos.
+3. **`recargar` como acción de reintentar**: con el JSON roto, Reintentar vuelve
+   a fallar; restaurada la semilla, Reintentar carga bien.
+4. **Sin bucle de recargas**: el contador de renders se queda quieto con la
+   pantalla en reposo. Es la comprobación de que el `useCallback` está bien
+   puesto; si faltara, ese número subiría solo sin parar.
+
+Después de la prueba se restauraron `index.tsx` y `_layout.tsx` desde sus copias
+—verificado con `git diff`, idénticos— y se **borró** `app/(tabs)/prueba.tsx`. Un
+`grep` sobre `app/` confirma que no quedan referencias a la sonda ni al hook. El
+commit lleva un solo archivo.
+
+**Pendiente que deja esta tarea**: T019 (pantalla de resumen) figura como
+dependiente de T009, pero el resumen no sale de `obtenerGastos` sino de
+`obtenerResumenPorCategoria`. Este hook no le sirve tal cual. Se decidió **no**
+generalizarlo ahora —sería código especulativo para una pantalla que todavía no
+existe— y resolverlo al llegar a T019, probablemente con un hook hermano que
+repita esta misma forma.
+
+**Nota sobre el estado del dispositivo**: la sonda escribió gastos de prueba en
+el teléfono y permite dejarlo vacío o con el JSON roto. Lo que haya quedado
+guardado es lo que va a mostrar la app en las próximas tareas.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
