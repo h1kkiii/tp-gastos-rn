@@ -16,6 +16,9 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* El detalle vive en el stack raíz, no en las pestañas: al abrirlo la
+            barra de pestañas se va y aparece la flecha de volver. */}
+        <Stack.Screen name="gasto/[id]" options={{ title: 'Detalle del gasto' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

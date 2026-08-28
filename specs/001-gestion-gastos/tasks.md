@@ -56,7 +56,7 @@ necesitan.
 - [x] T007 Implementar las cinco funciones de `services/gastos-service.ts` (`obtenerGastos`, `obtenerGastoPorId`, `crearGasto`, `borrarGasto`, `obtenerResumenPorCategoria`) con latencia simulada de 500–1000 ms, según [contracts/services.md](./contracts/services.md) (depende de T003, T005, T006)
 - [x] T008 [P] Crear los tres componentes de estado reutilizables: `components/estado-carga.tsx`, `components/estado-vacio.tsx` y `components/estado-error.tsx` (este último con acción de reintentar)
 - [x] T009 Crear el hook de carga con estados carga/vacío/error y refresco al ganar foco en `hooks/use-gastos.ts` (depende de T007)
-- [ ] T010 Armar la navegación de las cuatro pantallas en `app/_layout.tsx` (stack raíz con el detalle) y `app/(tabs)/_layout.tsx` (pestañas Gastos, Nuevo, Resumen), con las pantallas aún vacías
+- [x] T010 Armar la navegación de las cuatro pantallas en `app/_layout.tsx` (stack raíz con el detalle) y `app/(tabs)/_layout.tsx` (pestañas Gastos, Nuevo, Resumen), con las pantallas aún vacías
 
 **Checkpoint**: se navega entre las cuatro pantallas y la capa de datos responde,
 aunque las pantallas todavía no muestren nada.

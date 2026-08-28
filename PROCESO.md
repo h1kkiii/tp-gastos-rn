@@ -1181,3 +1181,82 @@ guardado es lo que va a mostrar la app en las próximas tareas.
 _(pendiente)_
 
 ---
+
+## T010 — La navegación de las cuatro pantallas
+
+**Fecha:** 2026-08-27
+**Tarea:** T010 de `specs/001-gestion-gastos/tasks.md` (Fase 2, Foundational)
+
+### Prompt usado
+
+```
+si, commitea y pasemos a la siguiente
+```
+
+Y, sobre el desvío que hizo falta para los íconos de las pestañas:
+
+```
+haz el 1
+```
+
+### Qué se generó
+
+Cierra la Fase 2, la que bloquea todas las historias de usuario.
+
+**Tres archivos nuevos**, pantallas provisorias, cada una con un comentario que
+dice qué tarea la reemplaza:
+
+- `app/(tabs)/nuevo.tsx` — la reemplaza T016.
+- `app/(tabs)/resumen.tsx` — la reemplaza T019.
+- `app/gasto/[id].tsx` — la reemplazan T017 y T018. Lee el `id` de la ruta con
+  `useLocalSearchParams` y lo muestra, para poder comprobar que el parámetro
+  llega.
+
+**Tres archivos modificados**:
+
+- `app/(tabs)/_layout.tsx` — de una pestaña a tres: Gastos, Nuevo y Resumen.
+- `app/_layout.tsx` — el detalle sumado al stack raíz, con el título
+  "Detalle del gasto".
+- `components/ui/icon-symbol.tsx` — dos entradas nuevas en el mapa de íconos.
+
+**Decisión de navegación**: el detalle vive en el **stack raíz y no dentro de las
+pestañas**. Al abrirlo, la barra de pestañas desaparece y aparece la flecha de
+volver, que es el comportamiento correcto para una pantalla a la que se llega
+desde un ítem de una lista. Quedó comentado en el archivo.
+
+**Desvío consciente del alcance de la tarea**: los íconos de las pestañas salen
+de `components/ui/icon-symbol.tsx`, que traduce nombres de SF Symbols a Material
+Icons, y ese mapa traía solo cuatro entradas del starter —casa, avión de papel,
+código y una flecha—. No había nada razonable para "Nuevo" ni para "Resumen".
+La tarea no nombra ese archivo, así que se consultó antes de tocarlo; se
+eligió agregar dos entradas (`plus.circle.fill` → `add-circle` y
+`chart.pie.fill` → `pie-chart`) en lugar de dejar las pestañas con íconos sin
+sentido hasta la fase de pulido. El cambio es aditivo: no toca ninguna de las
+cuatro entradas que ya estaban. Es el mismo criterio que en T002, cuando hubo
+que tocar un archivo que el texto de la tarea no nombraba.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Acá no hizo falta sonda: la tarea misma es
+visible. Se verificó:
+
+1. Las tres pestañas aparecen, con íconos distintos y con sentido, y cada una
+   muestra su pantalla.
+2. El detalle abre con la cabecera "Detalle del gasto" y su flecha de volver, y
+   **la barra de pestañas desaparece** — que es la comprobación de que quedó en
+   el stack raíz y no en las pestañas.
+3. El parámetro de ruta llega: la pantalla muestra el `id` recibido.
+
+Como todavía no hay nada tocable en el listado —eso llega en T012—, al detalle se
+entró por enlace directo: `exp://192.168.1.174:8081/--/gasto/g1`.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
