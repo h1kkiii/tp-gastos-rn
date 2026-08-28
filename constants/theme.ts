@@ -1,6 +1,8 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Los colores de la app, definidos para modo claro y modo oscuro.
+ * Hay otras formas de manejar estilos —[Nativewind](https://www.nativewind.dev/),
+ * [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app)—,
+ * pero el stack del proyecto está cerrado y no se agregan dependencias.
  */
 
 import { Platform } from 'react-native';

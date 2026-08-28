@@ -1,6 +1,7 @@
-// Semilla de gastos de ejemplo. Se escribe una sola vez, en el primer arranque
-// (T006); después la app trabaja siempre contra AsyncStorage. Es un detalle
-// interno de la capa de datos: se borra el día que haya un backend real.
+// Semilla de gastos de ejemplo. Se escribe una sola vez, cuando la app arranca
+// y todavía no hay nada guardado; después se trabaja siempre contra
+// AsyncStorage. Es un detalle interno de la capa de datos: se borra el día que
+// haya un backend real.
 
 import type { Gasto } from '@/types/gasto';
 

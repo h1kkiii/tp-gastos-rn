@@ -2051,3 +2051,90 @@ quieto unos segundos en cada una.
 _(pendiente)_
 
 ---
+
+## T020 — Revisión de idioma y comentarios
+
+**Fecha:** 2026-08-27
+**Tarea:** T020 de `specs/001-gestion-gastos/tasks.md` (Fase 8, Pulido)
+
+### Prompt usado
+
+```
+haz el commit y sigamos
+```
+
+Y, tras revisar los hallazgos y la propuesta:
+
+```
+hazlo
+```
+
+### Qué se revisó, y qué salió bien
+
+La tarea pide recorrer `app/`, `components/`, `services/`, `types/`, `hooks/` y
+`utils/` verificando el idioma y la utilidad de los comentarios. Tres de los
+cuatro frentes no necesitaron ningún cambio:
+
+- **Textos visibles: todos en español, sin excepciones.** Se revisaron los 15
+  literales de la app (`'Guardar'`, `'Borrando…'`, `'No se encontró el gasto.'`,
+  el mensaje del `Alert`, los títulos de las pestañas), los textos en JSX y los
+  mensajes que las pantallas les pasan a los componentes de estado.
+- **No hay comentarios vencidos.** Ni un `TODO` ni un `FIXME`. Ninguna pantalla
+  quedó con su comentario de "pantalla provisoria": se fueron reemplazando junto
+  con cada pantalla. Buscarlos importaba, porque un comentario que dice "esto lo
+  hace T016" en código donde T016 ya está hecha, miente.
+- **Los comentarios propios explican por qué, no qué.** Se revisaron uno por uno.
+  La densidad es alta en `services/` y `utils/` (30–43%), pero es casi toda
+  documentación de funciones exportadas, que en la capa destinada a ser
+  reemplazada por un backend gana su lugar.
+
+### Qué se cambió
+
+Seis archivos, **solo comentarios**: ni una línea de lógica.
+
+Cinco de ellos con comentarios en inglés heredados del starter de Expo, que
+habían sobrevivido a la limpieza de T002 porque están en archivos que se siguen
+usando:
+
+- `components/haptic-tab.tsx`
+- `components/ui/icon-symbol.tsx`
+- `hooks/use-theme-color.ts`
+- `hooks/use-color-scheme.web.ts`
+- `constants/theme.ts`
+
+Los cuatro primeros están en directorios que la tarea nombra. **`constants/` no
+está en esa lista**, y se consultó antes de tocarlo: se decidió traducirlo
+igual, porque dejar un único comentario en inglés por un tecnicismo de qué
+carpeta se enumeró era peor que el desvío mínimo de incluirlo. En el comentario
+de `theme.ts` se aprovechó para dejar asentado por qué no se van a usar las
+alternativas de estilos que menciona (Nativewind, Tamagui): el stack está cerrado
+por la constitución.
+
+El sexto cambio es propio: `services/mocks-gastos.ts` decía "se escribe una sola
+vez, en el primer arranque **(T006)**". Esa referencia no le dice nada a quien
+lea el código sin la lista de tareas al lado. La explicación quedó; la referencia
+se fue.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Barrido final por `grep`** de términos frecuentes del inglés sobre las siete
+  carpetas: **cero resultados**. No queda un solo comentario en inglés en el
+  código del proyecto.
+- Listado exhaustivo de los literales de texto visibles, para confirmar que
+  ninguno quedó en inglés.
+
+**No se probó en Expo Go, y en este caso no correspondía**: el cambio es
+exclusivamente de comentarios. No modifica una sola instrucción, así que el
+bundle resultante es idéntico y no hay nada nuevo que mirar en pantalla. La
+verificación real de esta tarea es la lectura, y `tsc` confirma que ningún
+archivo quedó mal formado.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---

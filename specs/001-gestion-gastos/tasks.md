@@ -141,7 +141,7 @@ con la suma manual de los gastos de esa categoría.
 
 **Purpose**: cierre de calidad sobre todo lo construido.
 
-- [ ] T020 Revisar que todos los textos visibles y los comentarios estén en español y que los comentarios sean breves y solo donde aporten, recorriendo `app/`, `components/`, `services/`, `types/`, `hooks/` y `utils/`
+- [x] T020 Revisar que todos los textos visibles y los comentarios estén en español y que los comentarios sean breves y solo donde aporten, recorriendo `app/`, `components/`, `services/`, `types/`, `hooks/` y `utils/`
 - [ ] T021 Ejecutar `npm run lint` y corregir lo que aparezca
 - [ ] T022 Recorrer completo el guion de [quickstart.md](./quickstart.md) en Expo Go y registrar el resultado de los trece bloques
 
