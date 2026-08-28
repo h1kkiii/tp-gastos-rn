@@ -105,7 +105,7 @@ descripción.
 **Independent Test**: tocar un gasto del listado y verificar que se ven monto,
 categoría, fecha y descripción, y que se puede volver sin alterar nada.
 
-- [ ] T017 [US3] Implementar la pantalla de detalle en `app/gasto/[id].tsx`, con los tres estados, el caso de descripción vacía y el mensaje claro cuando el `id` no existe (depende de T007, T008)
+- [x] T017 [US3] Implementar la pantalla de detalle en `app/gasto/[id].tsx`, con los tres estados, el caso de descripción vacía y el mensaje claro cuando el `id` no existe (depende de T007, T008)
 
 **Checkpoint**: US1, US2 y US3 funcionan por separado.
 

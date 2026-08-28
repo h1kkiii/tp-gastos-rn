@@ -1796,3 +1796,83 @@ gastos propios y verlos en el listado, sobreviviendo al cierre.
 _(pendiente)_
 
 ---
+
+## T017 — La pantalla de detalle
+
+**Fecha:** 2026-08-27
+**Tarea:** T017 de `specs/001-gestion-gastos/tasks.md` (Fase 5, US3). **Cierra la US3.**
+
+### Prompt usado
+
+```
+haz el commit y pasemos a la siguiente
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+avanza
+```
+
+### Qué se generó
+
+Un único archivo modificado: `app/gasto/[id].tsx`, que pasó de la pantalla
+provisoria de T010 al detalle real. Es la US3 completa en una sola tarea.
+
+Toma el `id` de la ruta, se lo pasa a `obtenerGastoPorId` y muestra los cuatro
+datos: el monto grande arriba —formateado con `formatearMonto` de T011— y debajo
+categoría, fecha (en `dd/mm/aaaa`, con las utilidades de T004) y descripción.
+Con los tres estados de siempre.
+
+Decisiones:
+
+- **El `id` inexistente no necesitó código especial.** `obtenerGastoPorId` lanza
+  "No se encontró el gasto.", decisión tomada deliberadamente en T007 justamente
+  para cubrir el caso de abrir un gasto ya borrado. La pantalla lo captura por el
+  mismo camino que cualquier fallo de lectura. **El caso difícil salió gratis
+  porque la decisión estaba tomada en el lugar correcto.**
+- **La descripción vacía se muestra como "Sin descripción"**, en gris e itálica.
+  La spec acepta las dos formas ("vacío o indicado como sin descripción"), pero
+  un hueco en blanco parece un error de carga; el texto explícito dice que no hay
+  nada y que está bien que no lo haya.
+- **La descripción larga se muestra completa, con scroll.** La spec permite
+  recortarla, pero esta es la única pantalla donde se puede leer: cortarla acá la
+  volvería inaccesible.
+- **Un componente auxiliar `Dato`** para el par etiqueta/valor, en vez de repetir
+  la misma estructura tres veces.
+
+**Decisión de no generalizar, tomada a propósito.** Esta pantalla necesita un
+gasto puntual, no la lista, así que no puede usar `use-gastos`. Se repitió el
+patrón de `useState` + `useFocusEffect` + bandera de cancelación en la pantalla.
+Es la primera repetición, y con dos casos todavía no se ve cuál sería la forma
+correcta de abstraerlo. **Si en T019 aparece un tercero, ahí conviene extraerlo**
+y se va a plantear entonces.
+
+**Lo que esta tarea no hace**: no agrega el botón de borrar. Eso es T018, que
+modifica este mismo archivo — la única dependencia real entre historias de todo
+el plan.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Sin sonda: la tarea es la pantalla. Se recorrió
+el bloque 8 del `quickstart.md` más dos casos extra:
+
+1. Tocar un gasto del listado muestra el indicador de carga y después los cuatro
+   datos; al volver, el listado queda igual.
+2. **Descripción vacía**: el gasto de Salud, que la semilla dejó sin descripción
+   a propósito, muestra "Sin descripción" en gris.
+3. **Gasto inexistente**: entrando por `exp://…/--/gasto/no-existe` aparece el
+   estado de error con "No se encontró el gasto." y su botón de reintentar, en
+   lugar de una pantalla rota. Es el caso que la spec pide expresamente.
+4. Una descripción larga se lee completa, sin desbordar.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
