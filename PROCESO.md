@@ -77,11 +77,18 @@ Nada: no hizo falta corregir a mano lo generado.
 
 ### Prompt usado
 
-<!-- COMPLETAR: este archivo ya estaba escrito en el working tree al inicio de
-     la sesión de la constitución. No hay registro de si se redactó a mano o con
-     ayuda del asistente, ni del prompt en ese caso. -->
+No hubo un prompt único. El archivo se armó en una **conversación iterativa con
+Claude en el navegador**, de a poco, ajustando y agregando secciones hasta llegar
+al contenido final. No se conservó la transcripción de ese intercambio, así que no
+se puede reproducir acá el prompt exacto: no existe uno solo que lo resuma.
 
-_(pendiente — ver nota abajo)_
+Queda registrado igual porque el cómo importa: `CLAUDE.md` no se dictó de una vez,
+se fue puliendo. Es la única pieza del proyecto construida así —el resto salió de
+prompts puntuales, transcriptos en cada entrada— y es también la que terminó
+gobernando todas las demás.
+
+Es anterior a este archivo: cuando arrancó la sesión de la constitución ya estaba
+escrito en el working tree, y `PROCESO.md` todavía no existía.
 
 ### Qué se generó
 
