@@ -2239,3 +2239,68 @@ apareció en lugar de lo esperado; cuando pasa, el resultado es el resultado.
 Nada: no hizo falta corregir a mano lo generado.
 
 ---
+
+## README del proyecto
+
+**Fecha:** 2026-08-27
+**Fuera del plan**: no es una tarea de `tasks.md`. Se pidió al cerrar el trabajo.
+
+### Prompt usado
+
+```
+actualiza el readme.md como ultima tarea, explicando como correr el proyecto
+```
+
+### Qué se generó
+
+`README.md` pasó del texto genérico que trae la plantilla de Expo —en inglés, sin
+una sola mención a esta app— a la documentación real del proyecto, en español:
+
+- **Qué es la app**, en tres líneas.
+- **Requisitos**: Node 18+, Expo Go en el teléfono, y la advertencia de que la
+  computadora y el teléfono estén en la misma red Wi-Fi. Se señala como el punto
+  que más suele fallar, porque es exactamente lo que pasó al verificar las tareas.
+- **Cómo correrlo**: `npm install`, `npm start`, y las dos formas de abrirlo en
+  Expo Go (QR o dirección `exp://` a mano).
+- **Tabla de problemas frecuentes**, con los tres que aparecieron realmente
+  durante el desarrollo: el teléfono que no encuentra el servidor, el bundle
+  cacheado que muestra una versión vieja —el mismo tropiezo de T002— y
+  `npm start -- --clear`.
+- **Scripts disponibles**, incluido `npx tsc --noEmit`, que no estaba en
+  `package.json` pero se usó como verificación en todas las tareas.
+- **Estructura de carpetas** y una explicación corta de cómo están armados los
+  datos: todo pasa por `gastos-service.ts`, la latencia simulada es deliberada, y
+  la semilla se escribe una sola vez.
+- **Índice de la documentación**: `PROCESO.md`, `CLAUDE.md` y los cinco
+  documentos de `specs/`.
+
+**Un hallazgo con consecuencia real.** El README de la plantilla presentaba
+`npm run reset-project` como un paso normal a correr "cuando estés listo". Se
+revisó qué hace ese script: **borra o mueve `app/`, `components/`, `hooks/`,
+`scripts/` y `constants/`** para dejar un proyecto en blanco. Sobre este
+repositorio, destruye la app entera. Se sacó de las instrucciones y en su lugar
+quedó una advertencia explícita de no correrlo. Es el cambio más importante del
+archivo: el README anterior invitaba a borrar el trabajo.
+
+Se documenta además una consecuencia del diseño que conviene saber de antemano:
+**borrar todos los gastos desde la app no devuelve los de ejemplo**, porque la
+semilla se escribe solo cuando la clave no existe. Para volver al estado inicial
+hay que borrar los datos de Expo Go desde los ajustes del sistema. Es lo mismo
+que apareció al preparar T022.
+
+### Cómo se verificó
+
+- Se comprobó por script que **los siete archivos enlazados existen** y que **las
+  ocho rutas de la estructura de carpetas existen**. Ningún enlace apunta al
+  vacío.
+- Los scripts documentados se contrastaron uno por uno contra `package.json`.
+- El comportamiento de `reset-project` se verificó leyendo el script, no
+  suponiendo lo que hacía por su nombre.
+
+No aplica prueba en Expo Go: es documentación y no toca el código de la app.
+
+### Qué corregí a mano
+
+Nada: no hizo falta corregir a mano lo generado.
+
+---
