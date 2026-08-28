@@ -1260,3 +1260,95 @@ entró por enlace directo: `exp://192.168.1.174:8081/--/gasto/g1`.
 _(pendiente)_
 
 ---
+
+## T011 — La tarjeta del listado
+
+**Fecha:** 2026-08-27
+**Tarea:** T011 de `specs/001-gestion-gastos/tasks.md` (Fase 3, US1 — el MVP)
+
+### Prompt usado
+
+```
+haz el commit, prosigamos
+```
+
+Y, sobre las dos decisiones que se plantearon antes de escribir código:
+
+```
+si, hazlo como me dijiste
+```
+
+### Qué se generó
+
+Dos archivos nuevos:
+
+- **`components/tarjeta-gasto.tsx`** — la fila del listado: categoría y monto en
+  la misma línea, fecha debajo en gris. Es el primer consumidor real de
+  `aDdMmAaaaDesdeIso`, escrita en T004.
+- **`utils/moneda.ts`** — `formatearMonto`, que convierte `3480.5` en
+  `"$3.480,50"`.
+
+**La descripción no va en la tarjeta**: la spec dice que en el listado no entra y
+que es del detalle. La tarjeta muestra monto, categoría y fecha, que es lo que
+pide FR-003, ni más ni menos.
+
+Decisiones:
+
+- **La tarjeta no navega sola.** Recibe un `onPress` y no sabe a dónde lleva; la
+  ruta la decide la pantalla en T012. Misma línea que los componentes de T008:
+  reciben datos y funciones, no deciden.
+- **El monto se encoge antes de romper la fila.** La spec pide como edge case que
+  un monto extremadamente grande se muestre sin cortar el texto ni romper la
+  fila. Con `flexShrink` en los dos textos y `numberOfLines={1}`, un monto de
+  muchas cifras entra sin empujar la categoría fuera de la pantalla.
+- **Si la fecha guardada fuera ilegible, se muestra cruda** en lugar de dejar el
+  renglón vacío: `aDdMmAaaaDesdeIso(...) ?? gasto.fecha`.
+
+**Segundo desvío consciente del alcance, consultado antes de hacerlo**: la tarea
+nombra un solo archivo, pero el formato del monto no podía vivir adentro del
+componente. El detalle (T017) y el resumen (T019) también muestran montos, y
+tenerlo en la tarjeta obligaría a duplicarlo o a importar una función desde un
+componente. Se creó `utils/moneda.ts` con el mismo criterio con el que ya existía
+`utils/fecha.ts`: una conversión de dato a texto, compartida, fuera de
+`services/` porque tiene que sobrevivir al reemplazo de la capa de datos.
+
+**Se formatea a mano y no con `Intl.NumberFormat`**, también por decisión
+consultada. `Intl` es más elegante, pero depende de los datos de locale del
+dispositivo: en Android viejo pueden no estar, y el mismo monto se vería distinto
+según el teléfono. Seis líneas propias dan un resultado idéntico en todos lados,
+se prueban en Node y se explican línea por línea, que es lo que pide el principio
+V. La función trabaja en centavos enteros justamente para no arrastrar el error
+de punto flotante al separar la parte entera de la decimal.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Banco de pruebas del formateo: 30 de 30 pasan.** Cubre los seis montos de la
+  semilla, todos los bordes de la separación de miles (999 → 1.000 → 10.000 →
+  1.000.000), el monto extremadamente grande que pide la spec
+  (`$12.345.678.901,23`), decimales que se completan a dos (`0.5` → `$0,50`), el
+  cero, y los negativos, que no deberían llegar pero se muestran con el signo en
+  vez de perderse.
+
+**Un caso que primero pareció una falla y no lo era.** La prueba esperaba que
+`1.005` se mostrara como `$1,01` y devolvía `$1,00`. Revisado: `1.005` como
+número de punto flotante vale en realidad `1.00499999999999989`, así que redondear
+a dos decimales da `1,00`. No es un error del formateo, y lo importante es que
+**coincide con lo que el servicio guarda**: `crearGasto` usa el mismo redondeo y
+almacena exactamente `1`. Se corrigió la expectativa de la prueba y se agregaron
+seis chequeos nuevos que comparan, para varios montos, el texto formateado contra
+el texto del valor ya redondeado por el servicio. Coinciden en todos.
+
+**No se probó en Expo Go todavía**: la tarjeta sola no tiene dónde vivir hasta que
+exista el listado. Se verifica en T012, que es la tarea que la pone en pantalla,
+y ahí se mira lo que Node no puede decir: que la fila se vea bien y que un monto
+largo no la rompa.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
