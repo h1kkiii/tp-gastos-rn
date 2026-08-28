@@ -1352,3 +1352,81 @@ largo no la rompa.
 _(pendiente)_
 
 ---
+
+## T012 — La pantalla de listado (MVP)
+
+**Fecha:** 2026-08-27
+**Tarea:** T012 de `specs/001-gestion-gastos/tasks.md` (Fase 3, US1 — el MVP)
+
+### Prompt usado
+
+```
+si, haz el commit y sigamos
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+perfecto, avanza
+```
+
+### Qué se generó
+
+Un único archivo modificado: `app/(tabs)/index.tsx`, que pasó de la pantalla
+provisoria de T002 al listado real. No se creó ni se tocó nada más.
+
+Es la tarea donde por primera vez se junta todo lo construido en la Fase 2: el
+hook de T009 le pide los datos al servicio de T007, que lee del almacenamiento de
+T006, y lo que vuelve se dibuja con las tarjetas de T011 o con los componentes de
+estado de T008. **Con esto la app pasa a ser demostrable**: es el MVP.
+
+La pantalla resuelve los cuatro caminos en orden —cargando, error, vacío y
+lista—, cada uno con un retorno temprano, que se lee mejor que un encadenado de
+ternarios.
+
+Decisiones:
+
+- **`FlatList` y no un `map` dentro de un `ScrollView`.** `FlatList` solo dibuja
+  las filas visibles. Con seis gastos da igual, pero la persona va a acumular
+  cientos, y ahí un `map` empieza a trabar el scroll. Es la diferencia entre una
+  pantalla que envejece bien y una que no.
+- **El orden no se toca acá.** `obtenerGastos` ya devuelve ordenado, como fija el
+  contrato, justamente para que la pantalla no pueda desordenarlo por olvido. La
+  pantalla solo dibuja.
+- **La navegación vive en la pantalla, no en la tarjeta**: el `onPress` que se le
+  pasa a `TarjetaGasto` hace `router.push('/gasto/<id>')`. La tarjeta sigue sin
+  saber a dónde lleva.
+- **El título va como `ListHeaderComponent`**, así scrollea junto con la lista en
+  vez de quedar fijo ocupando espacio en pantallas chicas.
+- **Separador de una línea fina entre filas**, para que se lean como filas
+  distintas y no como un bloque de texto.
+
+**Lo que esta tarea deliberadamente no hace**: no agrega un botón de "nuevo
+gasto" (eso es la pestaña de T016) y no implementa el detalle real. Al tocar una
+fila se llega a la pantalla provisoria de T010, que muestra el `id`. Es lo
+esperado hasta T017.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Sin sonda: la tarea *es* la pantalla. Se
+recorrió el bloque 1 del guion de `quickstart.md` tal como está escrito:
+
+1. El indicador de carga se alcanza a ver — la latencia simulada de 500–1000 ms
+   cumple su propósito de hacer visible el estado, en vez de un parpadeo.
+2. Cada gasto muestra monto, categoría y fecha, con el monto formateado en pesos
+   (`$12.500,00`) y la fecha en `dd/mm/aaaa`.
+3. El orden es del más reciente al más viejo, y los dos gastos que comparten el
+   20/08 quedan juntos y en el mismo orden al cerrar y volver a abrir la app: el
+   desempate por `creadoEn` que se venía preparando desde T005 funciona.
+4. Al tocar una fila se navega al detalle, que todavía es la pantalla provisoria.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---

@@ -73,7 +73,7 @@ el indicador de carga, después el listado ordenado; y que borrando la clave de
 almacenamiento se ve el estado vacío.
 
 - [x] T011 [US1] Crear la fila del listado con monto, categoría y fecha en `components/tarjeta-gasto.tsx` (depende de T003, T004)
-- [ ] T012 [US1] Implementar la pantalla de listado en `app/(tabs)/index.tsx`, con los tres estados y navegación al detalle al tocar una fila (depende de T009, T011)
+- [x] T012 [US1] Implementar la pantalla de listado en `app/(tabs)/index.tsx`, con los tres estados y navegación al detalle al tocar una fila (depende de T009, T011)
 
 **Checkpoint**: US1 funciona sola. Es el MVP: ya hay algo demostrable.
 
