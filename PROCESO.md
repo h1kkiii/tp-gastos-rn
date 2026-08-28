@@ -2304,3 +2304,23 @@ No aplica prueba en Expo Go: es documentación y no toca el código de la app.
 Nada: no hizo falta corregir a mano lo generado.
 
 ---
+
+## Herramientas evaluadas y no incorporadas
+
+**Fecha:** 2026-08-28
+**Fuera del plan**: no es una tarea de `tasks.md`. Es una decisión de cierre,
+registrada por la autora.
+
+### Skills de la comunidad para React Native/Expo
+**Búsqueda:** se identificaron opciones activas (expo/skills, oficial de
+Expo; gigs-slc/react-native-skills; maikotrindade/awesome-react-native-skills).
+**Decisión:** no se instaló ninguna. El código ya fue revisado exhaustivamente
+por Claude Code durante las 22 tareas (lint, tsc, barridos de comentarios e
+idioma, verificación de dependencias entre tareas), y agregar una skill al
+cierre del proyecto solo para auditar código ya cerrado y probado no aportaba
+valor real — hubiera sido una instalación de trámite, no una herramienta
+efectivamente usada en el desarrollo. Se prioriza no sumar artefactos sin
+uso genuino, en línea con el criterio de todo el proyecto de no meter nada
+que no se pueda justificar.
+
+---
