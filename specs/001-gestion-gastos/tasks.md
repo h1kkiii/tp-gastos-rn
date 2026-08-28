@@ -88,7 +88,7 @@ pierde lo ya cargado.
 aparecer en el listado; y probar cada regla de validación verificando que bloquea
 el guardado con un mensaje junto al campo.
 
-- [ ] T013 [P] [US2] Crear el input con etiqueta y mensaje de error en `components/campo-texto.tsx`
+- [x] T013 [P] [US2] Crear el input con etiqueta y mensaje de error en `components/campo-texto.tsx`
 - [ ] T014 [P] [US2] Crear el selector de las seis categorías fijas en `components/selector-categoria.tsx` (depende de T003)
 - [ ] T015 [US2] Escribir las reglas de validación del formulario (monto, categoría y fecha) con sus mensajes en español en `utils/validacion-gasto.ts`, según la tabla de [data-model.md](./data-model.md) (depende de T004)
 - [ ] T016 [US2] Implementar la pantalla de alta en `app/(tabs)/nuevo.tsx`: fecha precargada con hoy, validación al guardar, conservación de los campos válidos al fallar, y vuelta al listado tras guardar (depende de T007, T013, T014, T015)

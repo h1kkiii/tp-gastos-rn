@@ -1430,3 +1430,85 @@ recorrió el bloque 1 del guion de `quickstart.md` tal como está escrito:
 _(pendiente)_
 
 ---
+
+## T013 — El campo de texto del formulario
+
+**Fecha:** 2026-08-27
+**Tarea:** T013 de `specs/001-gestion-gastos/tasks.md` (Fase 4, US2)
+
+### Prompt usado
+
+```
+si, commitea la ask
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+avanza
+```
+
+### Qué se generó
+
+`components/campo-texto.tsx`, un único archivo nuevo. No se tocó nada existente.
+Es la primera de las cuatro piezas de la US2, y el formulario de alta lo va a
+usar para monto, fecha y descripción.
+
+Tres partes apiladas: etiqueta arriba, input, y mensaje de error abajo cuando lo
+hay. Props: `etiqueta`, `valor`, `onChangeText`, `error`, `placeholder`,
+`keyboardType` y `multiline`.
+
+Decisiones:
+
+- **El componente no valida.** Recibe el `error` ya calculado y solo lo muestra.
+  Las reglas viven en `utils/validacion-gasto.ts` (T015) y cuándo aplicarlas lo
+  decide la pantalla (T016). Si el componente validara, cada regla quedaría atada
+  a un input y no se podrían probar por separado.
+- **El borde se pone rojo, además del mensaje.** Con solo texto, en un formulario
+  de varios campos hay que leer para encontrar cuál falló; con el borde marcado
+  se ve de un vistazo.
+- **`TextInput` con el color de texto del tema aplicado explícitamente.** Es el
+  detalle fácil de olvidar de esta tarea: a diferencia de `ThemedText`,
+  `TextInput` no hereda el color, así que sin esto en modo oscuro se escribiría
+  texto negro sobre fondo negro. El placeholder usa el color `icon`, más apagado
+  que el texto real.
+- **El rojo del error es una constante local.** `constants/theme.ts` no define un
+  color de error, y ampliarlo habría sido otro desvío que esta tarea no necesita.
+- **Accesibilidad**: `accessibilityLabel` con la etiqueta, y el mensaje de error
+  anunciado con `accessibilityRole="alert"`, para que un lector de pantalla no
+  lea un campo suelto sin contexto.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Es un componente puramente visual, así que un
+banco de pruebas en Node no aportaba nada. Se usó otra vez la **sonda
+descartable**, esta vez sobre `app/(tabs)/nuevo.tsx` —la pantalla provisoria que
+T016 va a reemplazar de todos modos— para no tocar el listado recién terminado.
+La sonda mostró cuatro campos y un botón que enciende y apaga los errores. Se
+verificó:
+
+1. Se escribe en los tres campos y el texto espejado abajo confirma que
+   `onChangeText` llega; el de monto abre teclado numérico.
+2. Al encender los errores, el borde se pone rojo y aparece el mensaje; al
+   apagarlos, todo vuelve a su estado normal.
+3. Un mensaje de error deliberadamente largo ocupa varios renglones sin desbordar
+   ni empujar los campos de abajo.
+4. La descripción multilínea crece y arranca el texto arriba, no centrado.
+5. **En modo oscuro se ve lo que se escribe** en los tres campos, y el
+   placeholder se distingue del texto real. Es la comprobación del punto del
+   color de `TextInput`.
+
+Después se restauró `app/(tabs)/nuevo.tsx` desde su copia —verificado con
+`git diff`, idéntico— y un `grep` sobre `app/` confirma que no quedan referencias
+al componente. El commit lleva un solo archivo.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
