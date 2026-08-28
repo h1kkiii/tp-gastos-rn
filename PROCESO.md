@@ -1607,3 +1607,97 @@ a la sonda. El commit lleva un solo archivo.
 _(pendiente)_
 
 ---
+
+## T015 — Las reglas de validación del formulario
+
+**Fecha:** 2026-08-27
+**Tarea:** T015 de `specs/001-gestion-gastos/tasks.md` (Fase 4, US2)
+
+### Prompt usado
+
+```
+haz el commit y sigamos
+```
+
+Y, sobre la decisión del separador decimal y los decimales de más:
+
+```
+si, hazlo como me lo planteaste
+```
+
+### Qué se generó
+
+`utils/validacion-gasto.ts`, un único archivo nuevo. No se tocó nada existente.
+Es la última pieza antes de la pantalla de alta, y la única de la US2 que es
+lógica pura.
+
+Expone `validarGasto(entrada)`, que devuelve `{ errores, datos }`. Si `errores`
+está vacío, `datos` trae el gasto listo para `crearGasto`, con el monto ya como
+número y la fecha ya en ISO.
+
+**Que devuelva también los datos convertidos es deliberado**: validar el monto ya
+implica interpretarlo, y validar la fecha ya implica convertirla. Si la función
+solo dijera "sí o no", la pantalla tendría que repetir ambas conversiones, con el
+riesgo de que las dos no coincidan.
+
+**Decisión consultada: qué significa un punto en el monto.** `research.md` acepta
+coma o punto como separador decimal, pero eso vuelve ambiguo un texto como
+`"1.234"`: ¿mil doscientos treinta y cuatro, o uno con tres decimales? Se
+resolvió que **cualquier coma o punto es el separador decimal y no se acepta
+separador de miles**. Va en línea con la spec, que pide expresamente que un monto
+con separador de miles no se dé por válido solo porque "parece" un número. En la
+práctica casi no molesta: el teclado del campo es numérico y ofrece un solo
+separador.
+
+**Tercer desvío consciente, también consultado: un mensaje nuevo.** De la
+decisión anterior se desprende que `"1.2345"` son cuatro decimales. La spec dice
+que un monto con más decimales *"se rechaza o se redondea a dos de forma visible,
+nunca en silencio"*, pero la tabla del data-model no tiene un mensaje para eso, y
+responder "El monto tiene que ser un número." a quien escribió `1.2345` es
+confuso. Se agregó **"El monto puede tener hasta dos decimales."**, que es preciso
+y dice qué corregir. Se descartó redondear y reescribir el campo: un campo que se
+corrige solo mientras se escribe es molesto.
+
+**`data-model.md` se actualizó en consecuencia**, por pedido explícito de la
+autora: se sumó la fila del mensaje nuevo a la tabla de validación, y tres
+párrafos que dejan asentado el criterio del separador decimal, por qué se eligió
+rechazar en vez de redondear, y el orden de evaluación del monto. El documento de
+diseño no se tocó antes de tener esa aprobación.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+- **Banco de pruebas en Node: 39 de 39 pasan.** Los casos de los bloques 4, 5, 6
+  y 7 del `quickstart.md` están copiados tal cual, para que la verificación
+  manual después no encuentre nada nuevo. Suma casos propios: `$1500`, `15 00`,
+  `1,2,3`, `1.` y `.5` como entradas que no son número; `0,00` como cero
+  disfrazado; coma y punto dando el mismo resultado; `29/02/2024` válido y
+  `29/02/2026` no; la descripción guardada sin espacios sobrantes; y los tres
+  campos informando su error a la vez.
+- Dos chequeos de coherencia con el resto del sistema: que las seis categorías de
+  `CATEGORIAS` sean aceptadas, y que una fecha convertida a ISO vuelva a
+  `dd/mm/aaaa` sin perder nada usando las funciones de T004.
+
+**Un error propio encontrado al contrastar contra el guion.** El `quickstart.md`
+especifica que `-50` debe responder **"El monto tiene que ser mayor a 0."**, y la
+primera versión respondía "El monto tiene que ser un número.", porque la
+expresión regular rechazaba el signo menos antes de llegar a evaluar el valor.
+Los dos mensajes existen en la tabla, así que el error no era visible salvo
+comparando caso por caso contra el guion. Se corrigió aceptando el signo en el
+formato y dejando que la regla de "mayor a 0" sea la que lo rechace, que además
+es el orden correcto: primero se interpreta el número, después se juzga su valor.
+Se agregaron cuatro casos más (`-0,01`, `-1500,50`, `--5`, `5-`) para fijar el
+comportamiento.
+
+**No se probó en Expo Go, y en este caso no correspondía**: es lógica pura y
+ninguna pantalla la usa todavía. Se ve entera en T016, donde el formulario la
+conecta con los componentes de T013 y T014.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---

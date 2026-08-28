@@ -44,6 +44,7 @@ entrada inválida llega a `services/`.
 |---|---|---|
 | monto | No vacío | "Ingresá un monto." |
 | monto | Interpretable como número (acepta coma o punto decimal) | "El monto tiene que ser un número." |
+| monto | Hasta dos decimales | "El monto puede tener hasta dos decimales." |
 | monto | Mayor a 0 | "El monto tiene que ser mayor a 0." |
 | categoría | Elegida | "Elegí una categoría." |
 | fecha | No vacía | "Ingresá una fecha." |
@@ -52,6 +53,22 @@ entrada inválida llega a `services/`.
 
 Al fallar una validación, los demás campos conservan lo cargado (FR-013). El
 mensaje de un campo desaparece en cuanto ese campo se corrige.
+
+**Sobre el separador decimal**: cualquier coma o punto se interpreta como
+separador decimal, y **no se acepta separador de miles**. Un texto como `1.234`
+es ambiguo —¿mil doscientos treinta y cuatro, o uno con tres decimales?— y la
+spec pide que la entrada no se dé por válida solo porque "parece" un número. Por
+eso `1.234` se lee como tres decimales y cae en la regla de los dos decimales.
+
+La regla de los dos decimales se agregó en T015: la spec contempla que un monto
+con más decimales "se rechaza o se redondea a dos de forma visible, nunca en
+silencio", y esta tabla no tenía un mensaje para ese caso. Se eligió rechazar con
+un mensaje propio en lugar de reescribir el campo mientras la persona escribe.
+
+El orden de evaluación del monto importa: primero se interpreta el texto como
+número —el signo menos se acepta en esta etapa— y recién después se juzga su
+valor. Así `-50` recibe "El monto tiene que ser mayor a 0." y no "El monto tiene
+que ser un número.", que es lo que pide el guion de `quickstart.md`.
 
 ### Formato de fecha: dos representaciones
 
