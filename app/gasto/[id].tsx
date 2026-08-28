@@ -1,13 +1,13 @@
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { EstadoCarga } from '@/components/estado-carga';
 import { EstadoError } from '@/components/estado-error';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useCarga } from '@/hooks/use-carga';
 import { borrarGasto, obtenerGastoPorId } from '@/services/gastos-service';
-import type { Gasto } from '@/types/gasto';
 import { aDdMmAaaaDesdeIso } from '@/utils/fecha';
 import { formatearMonto } from '@/utils/moneda';
 
@@ -18,42 +18,16 @@ export default function PantallaDetalleGasto() {
   // El id llega en la ruta: /gasto/g1
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const [gasto, setGasto] = useState<Gasto | null>(null);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [errorAlBorrar, setErrorAlBorrar] = useState<string | null>(null);
   const [borrando, setBorrando] = useState(false);
 
-  // Misma bandera que en use-gastos: con la latencia simulada hay tiempo de
-  // salir de la pantalla antes de que llegue la respuesta.
-  const cancelado = useRef(false);
-
-  const cargar = useCallback(async () => {
-    setCargando(true);
-    setError(null);
-    try {
-      const encontrado = await obtenerGastoPorId(id);
-      if (!cancelado.current) setGasto(encontrado);
-    } catch (e) {
-      // Un id inexistente llega por acá: el servicio lanza "No se encontró el
-      // gasto.", que es justo el caso de abrir un gasto ya borrado.
-      if (!cancelado.current) {
-        setError(e instanceof Error ? e.message : 'No se pudo cargar el gasto.');
-      }
-    } finally {
-      if (!cancelado.current) setCargando(false);
-    }
-  }, [id]);
-
-  useFocusEffect(
-    useCallback(() => {
-      cancelado.current = false;
-      cargar();
-      return () => {
-        cancelado.current = true;
-      };
-    }, [cargar])
-  );
+  // Va envuelta en useCallback porque depende del id: si se recreara en cada
+  // render, use-carga volvería a pedir los datos sin parar.
+  //
+  // Un id inexistente llega como error: el servicio lanza "No se encontró el
+  // gasto.", que es justo el caso de abrir un gasto ya borrado.
+  const traerGasto = useCallback(() => obtenerGastoPorId(id), [id]);
+  const { datos: gasto, cargando, error, recargar } = useCarga(traerGasto);
 
   /**
    * Pide confirmación antes de tocar nada. FR-014 exige que ningún gasto
@@ -94,7 +68,7 @@ export default function PantallaDetalleGasto() {
   if (error || !gasto) {
     return (
       <ThemedView style={estilos.centrado}>
-        <EstadoError mensaje={error ?? 'No se encontró el gasto.'} onReintentar={cargar} />
+        <EstadoError mensaje={error ?? 'No se encontró el gasto.'} onReintentar={recargar} />
       </ThemedView>
     );
   }

@@ -131,7 +131,7 @@ cancelar no borra nada, confirmar elimina el gasto del listado.
 **Independent Test**: abrir el resumen con datos conocidos y comparar cada total
 con la suma manual de los gastos de esa categoría.
 
-- [ ] T019 [US5] Implementar la pantalla de resumen en `app/(tabs)/resumen.tsx`, con los tres estados, solo categorías con gastos y sin fila de total general (depende de T007, T008, T009)
+- [x] T019 [US5] Implementar la pantalla de resumen en `app/(tabs)/resumen.tsx`, con los tres estados, solo categorías con gastos y sin fila de total general (depende de T007, T008, T009)
 
 **Checkpoint**: las cinco historias funcionan por separado.
 

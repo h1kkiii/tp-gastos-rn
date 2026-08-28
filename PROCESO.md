@@ -1961,3 +1961,93 @@ porque el punto 4 pedía borrar todo. Es el punto de partida para probar T019.
 _(pendiente)_
 
 ---
+
+## T019 — El resumen por categoría
+
+**Fecha:** 2026-08-27
+**Tarea:** T019 de `specs/001-gestion-gastos/tasks.md` (Fase 7, US5).
+**Cierra la US5 y, con ella, las cinco historias.**
+
+### Prompt usado
+
+```
+si, haz el commit y sigamos
+```
+
+Y, sobre la decisión de generalizar el patrón de carga:
+
+```
+si, haz la opc 1 como dijiste
+```
+
+### Qué se generó
+
+Un archivo nuevo y tres modificados:
+
+- **`hooks/use-carga.ts`** (nuevo) — el hook genérico de carga.
+- **`app/(tabs)/resumen.tsx`** — la pantalla de resumen real.
+- **`hooks/use-gastos.ts`** — reescrito sobre el hook genérico: de 59 líneas a 18.
+- **`app/gasto/[id].tsx`** — migrado al hook genérico: 48 líneas menos.
+
+**La decisión de fondo: se generalizó el patrón de carga.** En T017 quedó
+anotado que si aparecía un tercer caso del patrón carga/vacío/error con refresco
+al foco, convenía extraerlo. El resumen fue ese tercer caso: no puede usar
+`use-gastos` porque no trae la lista de gastos sino los totales.
+
+`useCarga(traerDatos)` recibe la función que trae los datos y devuelve
+`{ datos, cargando, error, recargar }`, con el refresco al ganar foco y la
+bandera de cancelación adentro. Ahora hay **una sola definición de "cómo se carga
+algo en esta app"**, en vez de tres copias de la misma lógica —incluida la
+bandera de cancelación, que es la parte fácil de olvidar al copiar—.
+
+El costo asumido: tocar dos archivos ya cerrados y probados, ninguno en el
+alcance de T019. Fue el desvío más grande de todo el proyecto, y por eso **se
+hizo en dos pasos con una prueba en el dispositivo en cada uno**: primero el hook
+nuevo más el resumen, y recién después la migración de `use-gastos` y del
+detalle. Así, si algo se rompía en la migración, se sabía exactamente qué lo
+había roto, y las historias ya cerradas no quedaban a medio camino.
+
+Sobre el requisito de estabilidad de `traerDatos`: si la función se recreara en
+cada render, el hook pediría datos sin parar. En el resumen se pasa
+`obtenerResumenPorCategoria` directo, porque viene del módulo de servicios y su
+identidad ya es estable; en el detalle, que depende del `id`, va envuelta en
+`useCallback`. Está documentado en el hook y comentado en el detalle.
+
+De la pantalla de resumen en sí: **no calcula nada**. El servicio ya entrega solo
+las categorías con gastos, en el orden de `CATEGORIAS` y sin fila de total
+general. La pantalla dibuja lo que recibe.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go en dos rondas: funciona.**
+
+**Ronda 1, el resumen** (bloques 10 y 11 del `quickstart.md`). El dispositivo
+venía sin gastos desde T018, así que se aprovechó para ver primero el estado
+vacío. Después se cargaron cinco gastos con sumas fáciles de verificar a mano
+(1000 y 500 en Comida, 2500 en Transporte, 300,50 y 199,50 en Ocio):
+
+1. Los totales coinciden con la suma manual: Comida $1.500,00, Transporte
+   $2.500,00, Ocio $500,00.
+2. El orden es el de `CATEGORIAS`, no el del total.
+3. No aparecen Servicios, Salud ni Otros, por no tener gastos.
+4. Cargando un gasto de Salud desde otra pestaña, la fila aparece sola al volver
+   al resumen: el refresco al ganar foco del hook nuevo funciona.
+5. Borrando ese gasto, la fila de Salud **desaparece** en vez de quedar en $0,00.
+
+**Ronda 2, la no-regresión de todo lo anterior.** Es el motivo de haber partido
+la tarea en dos: se verificó que el listado, el detalle, el gasto inexistente, el
+borrado con sus dos caminos y el resumen siguen funcionando después de la
+migración. Y se controló específicamente el riesgo propio de esta
+refactorización: **que ninguna pantalla entre en bucle de recargas**, quedándose
+quieto unos segundos en cada una.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
