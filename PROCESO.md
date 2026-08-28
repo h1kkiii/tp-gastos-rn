@@ -1701,3 +1701,98 @@ conecta con los componentes de T013 y T014.
 _(pendiente)_
 
 ---
+
+## T016 — La pantalla de alta
+
+**Fecha:** 2026-08-27
+**Tarea:** T016 de `specs/001-gestion-gastos/tasks.md` (Fase 4, US2). **Cierra la US2.**
+
+### Prompt usado
+
+```
+si, actualizalo y haz el commit
+```
+
+Y, tras revisar el plan de la tarea:
+
+```
+avanz
+```
+
+### Qué se generó
+
+Un único archivo modificado: `app/(tabs)/nuevo.tsx`, que pasó de la pantalla
+provisoria de T010 al formulario real. Es la tarea más grande de la US2: junta el
+campo de texto (T013), el selector (T014), las reglas (T015) y el servicio
+(T007).
+
+Los cuatro comportamientos que pide la tarea:
+
+- **Fecha precargada con hoy** (FR-012), tomando `hoyIso()` de T004 y pasándola a
+  `dd/mm/aaaa`.
+- **Validación al guardar**, no mientras se escribe. Marcar en rojo un campo que
+  la persona todavía está completando es hostil.
+- **Los campos válidos se conservan al fallar** (FR-013).
+- **Vuelta al listado tras guardar**, con el gasto ya visible ahí.
+
+Decisiones:
+
+- **El error de un campo desaparece en cuanto se corrige**, como pide el
+  data-model. Se resuelve revalidando en cada cambio **pero solo si ya se intentó
+  guardar**: así no aparecen errores antes de tiempo, y sí desaparecen al
+  arreglar. La función de revalidación recibe el campo cambiado porque el estado
+  todavía tiene el valor anterior —`setMonto` no actualiza `monto` hasta el
+  próximo render—, un detalle fácil de pasar por alto que dejaría el mensaje
+  colgado un tecleo de más.
+- **El formulario se limpia recién cuando el guardado salió bien.** Si falla, no
+  se pierde nada de lo cargado: el almacenamiento puede fallar, pero eso no puede
+  costarle a la persona lo que escribió.
+- **Botón deshabilitado mientras guarda.** Con 500–1000 ms de latencia hay tiempo
+  de sobra para tocar dos veces y crear el gasto duplicado. Esto además esquiva
+  de raíz la limitación de concurrencia anotada en T007.
+- **`KeyboardAvoidingView`**, para que el teclado no tape el botón de guardar.
+- **La vuelta al listado es `router.push('/')`** y el listado se refresca solo al
+  ganar foco, gracias al hook de T009. Es donde se cobra lo construido en esa
+  tarea.
+
+**Una reescritura durante la implementación.** La primera versión resolvía la
+revalidación comparando identidades de funciones (`asignar === setMonto`) para
+deducir qué campo se había tocado. Funcionaba —las funciones de `useState` son
+estables— pero era opaco: de esos códigos que no se pueden explicar en una línea,
+lo que choca de frente con el principio V. Se reescribió para que cada campo diga
+explícitamente qué cambió (`revalidar({ monto: valor })`). Más largo de escribir,
+mucho más claro de leer.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Sin sonda: la tarea es la pantalla. Se
+recorrieron los bloques 3 a 7 del `quickstart.md`, la tanda más larga hasta ahora:
+
+1. **Alta feliz (bloque 3)**: la fecha viene precargada con hoy; al guardar se ve
+   "Guardando…" y se vuelve al listado con el gasto nuevo en la posición que le
+   toca por fecha; el formulario queda limpio al volver a entrar.
+2. **Validación del monto (bloque 4)**: las cuatro entradas del guion dan sus
+   mensajes exactos, incluido **`-50` → "El monto tiene que ser mayor a 0."**,
+   que era el caso corregido en T015.
+3. **Corrección en vivo**: con el error en pantalla, al corregir el campo el
+   mensaje desaparece al instante y **los demás campos conservan lo cargado**
+   (FR-013).
+4. **Categoría (bloque 5)**: guardar sin elegir muestra "Elegí una categoría."
+5. **Fecha (bloque 6)**: `31/02/2026` se rechaza; **una fecha futura se acepta y
+   guarda**, como pide el supuesto de la spec.
+6. **Descripción (bloque 7)**: guardar con la descripción vacía funciona.
+7. **Extra fuera del guion**: tocar Guardar dos veces rápido crea un solo gasto.
+
+**Con esto la US2 queda cerrada y la app sirve para uso real**: se pueden cargar
+gastos propios y verlos en el listado, sobreviviendo al cierre.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
