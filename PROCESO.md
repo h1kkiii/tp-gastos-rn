@@ -1512,3 +1512,98 @@ al componente. El commit lleva un solo archivo.
 _(pendiente)_
 
 ---
+
+## T014 — El selector de categoría
+
+**Fecha:** 2026-08-27
+**Tarea:** T014 de `specs/001-gestion-gastos/tasks.md` (Fase 4, US2)
+
+### Prompt usado
+
+```
+haz el commit, pasemos a lo siguiente
+```
+
+Con una verificación intermedia pedida por la autora, antes de seguir:
+
+```
+antes de seguir, anotaste los cambios previos a proceso.md?
+no vi que me lo hayas nombrado
+```
+
+Se comprobó que sí: 19 entradas, 13 de ellas de tareas (T001–T013), coincidiendo
+con las 13 tareas marcadas en `tasks.md`, y cada una commiteada junto a su tarea.
+Y después:
+
+```
+sigamos con t014
+```
+
+### Qué se generó
+
+`components/selector-categoria.tsx`, un único archivo nuevo. No se tocó nada
+existente. Es la última pieza visual del formulario de alta.
+
+**Las seis categorías se muestran como botones tipo "chip" en una grilla que
+envuelve**, no como un desplegable. Sin dependencias nuevas —la constitución
+cierra el stack, así que no hay librería de dropdown ni `Picker`— y con seis
+opciones fijas, los chips entran en dos o tres renglones según el ancho: se ven
+todas de una y no hay que abrir nada.
+
+Se descartaron dos alternativas: una fila horizontal scrolleable esconde opciones
+fuera de pantalla, y ni siquiera se sabe que están; y un `Modal` con la lista
+agrega un paso y una pantalla más para algo que entra sin problema en el
+formulario.
+
+Decisiones:
+
+- **Las opciones salen de `CATEGORIAS`**, recorriendo la constante de T003. Nada
+  escrito a mano: agregar una categoría allá la hace aparecer acá sola. Ese fue
+  justamente el motivo de derivar el tipo del arreglo en T003.
+- **La elegida se pinta entera, no solo con un borde más grueso.** En pantalla
+  chica un cambio de borde no se distingue; con relleno del color `tint` y el
+  texto invertido a color de fondo, se ve de un vistazo cuál está elegida.
+- **`valor` puede ser `null`**, que es el estado inicial: nada elegido. Es lo que
+  hace posible la regla "Elegí una categoría." Si arrancara con una
+  preseleccionada, esa validación no tendría sentido y se guardarían gastos en
+  una categoría que la persona nunca eligió.
+- **No valida**, igual que el campo de texto: recibe el `error` y lo muestra
+  debajo, con el mismo rojo y el mismo tamaño, para que los dos componentes del
+  formulario se vean parejos.
+- **`accessibilityState={{ selected }}`** en cada chip, para que un lector de
+  pantalla anuncie cuál está elegida y no lea seis botones iguales.
+
+### Cómo se verificó
+
+- `npx tsc --noEmit` — sin errores.
+- `npm run lint` — sin hallazgos.
+
+**Probado en Expo Go: funciona.** Otra vez con **sonda descartable** sobre
+`app/(tabs)/nuevo.tsx`, mostrando el selector junto al campo de texto de T013
+—así se comprobó de paso que los dos se ven coherentes entre sí—. Se verificó:
+
+1. Las seis categorías se ven todas, sin scroll horizontal y sin desplegar nada;
+   ninguna queda cortada ni escondida.
+2. Al tocar una se pinta entera y el texto de control confirma cuál quedó.
+3. Al tocar otra, la anterior se apaga: nunca hay dos elegidas.
+4. Con el error encendido y ninguna elegida, los seis bordes se ponen rojos y
+   aparece el mensaje; **al elegir una, el error desaparece al instante**, que es
+   lo que pide el data-model ("el mensaje de un campo desaparece en cuanto ese
+   campo se corrige").
+5. En modo oscuro el chip elegido sigue siendo legible y los no elegidos se
+   distinguen del fondo.
+6. El tamaño de los chips se revisó explícitamente en el dispositivo, por si las
+   etiquetas más largas ("Transporte", "Servicios") quedaban apretadas. No hizo
+   falta ajustar nada.
+
+Después se restauró `app/(tabs)/nuevo.tsx` desde su copia —verificado con
+`git diff`, idéntico— y un `grep` sobre `app/` confirma que no quedan referencias
+a la sonda. El commit lleva un solo archivo.
+
+### Qué corregí a mano
+
+<!-- COMPLETAR: describir acá los ajustes hechos a mano sobre lo generado. -->
+
+_(pendiente)_
+
+---
